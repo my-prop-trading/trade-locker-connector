@@ -1,9 +1,7 @@
 use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
-use crate::brand::{
-    CreateUserResponse
-};
+use crate::brand::CreateUserResponse;
 use error_chain::bail;
 use http::{Method, StatusCode};
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -15,6 +13,22 @@ use std::fmt::Debug;
 pub struct BrandApiConfig {
     pub api_url: String,
     pub api_key: String,
+}
+
+impl BrandApiConfig {
+    pub fn new_dev(api_key: impl Into<String>) -> Self {
+        Self {
+            api_url: "https://api-dev.tradelocker.com".to_string(),
+            api_key: api_key.into(),
+        }
+    }
+
+    pub fn new_prod(api_key: impl Into<String>) -> Self {
+        Self {
+            api_url: "https://api.tradelocker.com".to_string(),
+            api_key: api_key.into(),
+        }
+    }
 }
 
 pub struct BrandApiClient {
