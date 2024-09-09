@@ -16,3 +16,14 @@ pub struct CreateUserResponse {
     #[serde(rename = "userId")]
     pub user_id: String,
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CheckEmailRequest {
+    pub email: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CheckEmailResponse {
+    #[serde(rename = "userId")]
+    pub user_id: String,
+}
