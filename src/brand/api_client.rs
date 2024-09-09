@@ -1,10 +1,8 @@
-use crate::brand::endpoints::WebservicesApiEndpoint;
+use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
-use crate::brand::models::CreateTraderRequest;
+use crate::brand::models::CreateUserRequest;
 use crate::brand::{
-    CreateTraderResponse, GetSymbolsResponse, GetTraderGroupsResponse, GetTradersRequest,
-    GetTradersResponse, SymbolModel, TraderGroupModel, TraderModel, UpdateTraderBalanceRequest,
-    UpdateTraderBalanceResponse, UpdateTraderRequest,
+    CreateUserResponse
 };
 use error_chain::bail;
 use http::{Method, StatusCode};
@@ -32,61 +30,17 @@ impl BrandApiClient {
         }
     }
 
-    pub async fn get_trader_groups(&self) -> Result<Vec<TraderGroupModel>, Error> {
-        let request: Option<&String> = None;
-        let endpoint = WebservicesApiEndpoint::GetTraderGroups;
-        let resp: GetTraderGroupsResponse = self.send_deserialized(endpoint, request).await?;
-
-        Ok(resp.items)
-    }
-
-    pub async fn get_traders(
+    pub async fn create_user(
         &self,
-        request: &GetTradersRequest,
-    ) -> Result<Vec<TraderModel>, Error> {
-        let endpoint = WebservicesApiEndpoint::GetTraders;
-        let resp: GetTradersResponse = self.send_deserialized(endpoint, Some(request)).await?;
-
-        Ok(resp.items)
-    }
-
-    pub async fn get_trader(&self, login: i64) -> Result<TraderModel, Error> {
-        let request: Option<&String> = None;
-        let endpoint = WebservicesApiEndpoint::GetTrader(login);
-
-        self.send_deserialized(endpoint, request).await
-    }
-
-    pub async fn update_trader_balance(
-        &self,
-        request: &UpdateTraderBalanceRequest,
-    ) -> Result<UpdateTraderBalanceResponse, Error> {
-        let endpoint = WebservicesApiEndpoint::UpdateTraderBalance(request.login);
-        self.send_deserialized(endpoint, Some(request)).await
-    }
-
-    pub async fn update_trader(
-        &self,
-        login: i64,
-        request: &UpdateTraderRequest,
-    ) -> Result<(), Error> {
-        let endpoint = WebservicesApiEndpoint::UpdateTrader(login);
-        let _ = self.send(endpoint, Some(request)).await?;
-
-        Ok(())
-    }
-
-    pub async fn create_trader(
-        &self,
-        request: &CreateTraderRequest,
-    ) -> Result<CreateTraderResponse, Error> {
-        let endpoint = WebservicesApiEndpoint::CreateTrader;
+        request: &CreateUserRequest,
+    ) -> Result<CreateUserResponse, Error> {
+        let endpoint = BrandApiEndpoint::CreateUser;
         self.send_deserialized(endpoint, Some(request)).await
     }
 
     pub async fn send_deserialized<R: Serialize, T: DeserializeOwned + Debug>(
         &self,
-        endpoint: WebservicesApiEndpoint,
+        endpoint: BrandApiEndpoint,
         request: Option<&R>,
     ) -> Result<T, Error> {
         let base_url = &self.config.api_url;
@@ -98,7 +52,7 @@ impl BrandApiClient {
 
     pub async fn send<R: Serialize>(
         &self,
-        endpoint: WebservicesApiEndpoint,
+        endpoint: BrandApiEndpoint,
         request: Option<&R>,
     ) -> Result<String, Error> {
         let base_url = &self.config.api_url;
@@ -111,7 +65,7 @@ impl BrandApiClient {
     fn get_builder<R: Serialize>(
         &self,
         base_url: &str,
-        endpoint: WebservicesApiEndpoint,
+        endpoint: BrandApiEndpoint,
         request: Option<&R>,
     ) -> Result<(RequestBuilder, String, Option<String>), Error> {
         let headers = self.build_headers();
@@ -166,7 +120,7 @@ impl BrandApiClient {
     fn build_full_url(
         &self,
         base_url: &str,
-        endpoint: &WebservicesApiEndpoint,
+        endpoint: &BrandApiEndpoint,
         query_string: Option<String>,
     ) -> String {
         let endpoint_str = String::from(endpoint);
