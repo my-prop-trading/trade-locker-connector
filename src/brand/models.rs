@@ -153,7 +153,7 @@ pub struct CreateAccountRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct ActivateAccountRequest {
+pub struct UpdateAccountStatusRequest {
     #[serde(rename = "accountId")]
     pub account_id: String,
 }
@@ -172,8 +172,9 @@ pub enum AccountStatus {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct ActivateAccountResponse {
+pub struct UpdateAccountStatusResponse {
     #[serde(rename = "accountId")]
     pub account_id: String,
     pub status: AccountStatus,
 }
+

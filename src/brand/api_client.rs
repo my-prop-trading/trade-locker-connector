@@ -2,7 +2,7 @@ use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
 use crate::brand::{
-    AccountModel, ActivateAccountRequest, ActivateAccountResponse, CheckEmailRequest,
+    AccountModel, UpdateAccountStatusRequest, UpdateAccountStatusResponse, CheckEmailRequest,
     CheckEmailResponse, CreateAccountRequest, CreateUserResponse, GetAccountRequest,
     SetUserPasswordRequest,
 };
@@ -84,9 +84,28 @@ impl BrandApiClient {
 
     pub async fn activate_account(
         &self,
-        request: &ActivateAccountRequest,
-    ) -> Result<ActivateAccountResponse, Error> {
+        request: &UpdateAccountStatusRequest,
+    ) -> Result<UpdateAccountStatusResponse, Error> {
         let endpoint = BrandApiEndpoint::ActivateAccount;
+        self.send_deserialized(endpoint, Some(request)).await
+    }
+
+    /// Restricts an existing TradeLocker account. Restricted accounts cannot open positions.
+    pub async fn restrict_account(
+        &self,
+        request: &UpdateAccountStatusRequest,
+    ) -> Result<UpdateAccountStatusResponse, Error> {
+        let endpoint = BrandApiEndpoint::RestrictAccount;
+        self.send_deserialized(endpoint, Some(request)).await
+    }
+
+    /// Suspend an existing TradeLocker account.
+    /// Trading is prohibited for suspended accounts and they do not show up in the TradeLocker application.
+    pub async fn suspend_account(
+        &self,
+        request: &UpdateAccountStatusRequest,
+    ) -> Result<UpdateAccountStatusResponse, Error> {
+        let endpoint = BrandApiEndpoint::SuspendAccount;
         self.send_deserialized(endpoint, Some(request)).await
     }
 
