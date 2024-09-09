@@ -76,7 +76,7 @@ pub struct AccountModel {
     /// If ACTIVE, trading could be disabled by a risk rule.
     /// Check the 'tradingDisabledReason' property.
     #[serde(rename = "status")]
-    pub status: String,
+    pub status: AccountStatus,
 
     /// The reason for trading being disabled. If null, trading is enabled.
     #[serde(rename = "tradingDisabledReason")]
@@ -150,4 +150,30 @@ pub struct CreateAccountRequest {
     /// The ID of the group to place the account into. If not provided, placed into the brand's default group.
     #[serde(rename = "groupId")]
     pub group_id: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ActivateAccountRequest {
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+}
+
+#[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
+pub enum AccountStatus {
+    #[strum(to_string = "ACTIVE")]
+    #[serde(rename = "ACTIVE")]
+    Active,
+    #[strum(to_string = "RESTRICTED")]
+    #[serde(rename = "RESTRICTED")]
+    Restricted,
+    #[strum(to_string = "SUSPENDED")]
+    #[serde(rename = "SUSPENDED")]
+    Suspended,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ActivateAccountResponse {
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+    pub status: AccountStatus,
 }
