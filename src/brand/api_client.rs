@@ -19,9 +19,6 @@ pub struct BrandApiConfig {
     pub api_key: String,
 }
 
-/// A simple yet powerful RESTful API, designed to cover the basic integration requirements for CRM
-/// systems. It offers the capability to handle common CRM related tasks, such as the creation and
-/// updates of users and trading accounts, and performing deposits and withdrawals to those accounts.
 pub struct BrandApiClient {
     config: BrandApiConfig,
     inner_client: reqwest::Client,
@@ -35,16 +32,6 @@ impl BrandApiClient {
         }
     }
 
-    /// Gets the list of all available symbols on the server.
-    pub async fn get_symbols(&self) -> Result<Vec<SymbolModel>, Error> {
-        let request: Option<&String> = None;
-        let endpoint = WebservicesApiEndpoint::GetSymbols;
-        let resp: GetSymbolsResponse = self.send_deserialized(endpoint, request).await?;
-
-        Ok(resp.items)
-    }
-
-    /// Gets a list of all trader groups.
     pub async fn get_trader_groups(&self) -> Result<Vec<TraderGroupModel>, Error> {
         let request: Option<&String> = None;
         let endpoint = WebservicesApiEndpoint::GetTraderGroups;
@@ -70,7 +57,6 @@ impl BrandApiClient {
         self.send_deserialized(endpoint, request).await
     }
 
-    /// Changes the balance of a trader entity (including allocating/removing credit).
     pub async fn update_trader_balance(
         &self,
         request: &UpdateTraderBalanceRequest,
@@ -79,7 +65,6 @@ impl BrandApiClient {
         self.send_deserialized(endpoint, Some(request)).await
     }
 
-    /// Updates a trader entity.
     pub async fn update_trader(
         &self,
         login: i64,
@@ -91,7 +76,6 @@ impl BrandApiClient {
         Ok(())
     }
 
-    /// Creates a new trader (e.g. account)entity.
     pub async fn create_trader(
         &self,
         request: &CreateTraderRequest,
