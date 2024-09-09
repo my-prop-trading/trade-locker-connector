@@ -5,6 +5,7 @@ pub enum BrandApiEndpoint {
     CreateUser,
     CheckEmail,
     SetUserPassword,
+    GetAccount,
 }
 
 impl From<&BrandApiEndpoint> for String {
@@ -21,6 +22,9 @@ impl From<&BrandApiEndpoint> for String {
             BrandApiEndpoint::SetUserPassword => {
                 format!("/{}/users/set-password", api_version)
             }
+            BrandApiEndpoint::GetAccount => {
+                format!("/{}/accounts/details", api_version)
+            }
         }
     }
 }
@@ -31,6 +35,7 @@ impl BrandApiEndpoint {
             BrandApiEndpoint::CreateUser => Method::POST,
             BrandApiEndpoint::CheckEmail => Method::POST,
             BrandApiEndpoint::SetUserPassword => Method::POST,
+            BrandApiEndpoint::GetAccount => Method::POST,
         }
     }
 }
