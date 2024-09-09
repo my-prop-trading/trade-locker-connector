@@ -10,7 +10,12 @@ async fn main() {
 }
 
 pub async fn create_user(rest_client: &BrandApiClient) {
-    let resp = rest_client.create_user(&CreateUserRequest {}).await;
+    let resp = rest_client.create_user(&CreateUserRequest {
+        email: "trade-locker-test123@mailinator.com".to_string(),
+        password: "Qwerty123!".to_string(),
+        first_name: Some("test".to_string()),
+        last_name: Some("test".to_string()),
+    }).await;
 
     println!("{:?}", resp)
 }
