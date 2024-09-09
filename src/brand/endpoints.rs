@@ -11,6 +11,7 @@ pub enum BrandApiEndpoint {
     RestrictAccount,
     SuspendAccount,
     SetAccountGroup,
+    CloseAccountPositions,
 }
 
 impl From<&BrandApiEndpoint> for String {
@@ -45,6 +46,9 @@ impl From<&BrandApiEndpoint> for String {
             BrandApiEndpoint::SetAccountGroup => {
                 format!("/{}/accounts/set-group", api_version)
             }
+            BrandApiEndpoint::CloseAccountPositions => {
+                format!("/{}/accounts/close-all-positions", api_version)
+            }
         }
     }
 }
@@ -61,6 +65,7 @@ impl BrandApiEndpoint {
             BrandApiEndpoint::RestrictAccount => Method::PUT,
             BrandApiEndpoint::SuspendAccount => Method::PUT,
             BrandApiEndpoint::SetAccountGroup => Method::PUT,
+            BrandApiEndpoint::CloseAccountPositions => Method::POST,
         }
     }
 }

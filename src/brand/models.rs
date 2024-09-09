@@ -183,6 +183,17 @@ pub struct SetAccountGroupRequest {
     #[serde(rename = "accountId")]
     pub account_id: String,
     #[serde(rename = "newGroupId")]
-    pub group_id: String
+    pub group_id: String,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CloseAccountPositionsRequest {
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CloseAccountPositionsResponse {
+    #[serde(rename = "positionIdsOrderedToBeClosed")]
+    pub position_ids: String,
+}
