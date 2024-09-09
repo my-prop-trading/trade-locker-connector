@@ -4,6 +4,7 @@ use http::Method;
 pub enum BrandApiEndpoint {
     CreateUser,
     CheckEmail,
+    SetUserPassword,
 }
 
 impl From<&BrandApiEndpoint> for String {
@@ -15,7 +16,10 @@ impl From<&BrandApiEndpoint> for String {
                 format!("/{}/users/create", api_version)
             }
             BrandApiEndpoint::CheckEmail => {
-                format!("/{}/emails//users/check-by-email", api_version)
+                format!("/{}/users/check-by-email", api_version)
+            }
+            BrandApiEndpoint::SetUserPassword => {
+                format!("/{}/users/set-password", api_version)
             }
         }
     }
@@ -26,6 +30,7 @@ impl BrandApiEndpoint {
         match &self {
             BrandApiEndpoint::CreateUser => Method::POST,
             BrandApiEndpoint::CheckEmail => Method::POST,
+            BrandApiEndpoint::SetUserPassword => Method::POST,
         }
     }
 }

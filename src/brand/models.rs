@@ -27,3 +27,10 @@ pub struct CheckEmailResponse {
     #[serde(rename = "userId")]
     pub user_id: String,
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct SetUserPasswordRequest {
+    #[serde(rename = "userId")]
+    pub user_id: String,
+    pub password: String,
+}
