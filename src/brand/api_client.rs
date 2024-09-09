@@ -1,11 +1,7 @@
 use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
-use crate::brand::{
-    AccountModel, UpdateAccountStatusRequest, UpdateAccountStatusResponse, CheckEmailRequest,
-    CheckEmailResponse, CreateAccountRequest, CreateUserResponse, GetAccountRequest,
-    SetUserPasswordRequest,
-};
+use crate::brand::{AccountModel, UpdateAccountStatusRequest, UpdateAccountStatusResponse, CheckEmailRequest, CheckEmailResponse, CreateAccountRequest, CreateUserResponse, GetAccountRequest, SetUserPasswordRequest, SetAccountGroupRequest};
 use error_chain::bail;
 use http::{Method, StatusCode};
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -106,6 +102,16 @@ impl BrandApiClient {
         request: &UpdateAccountStatusRequest,
     ) -> Result<UpdateAccountStatusResponse, Error> {
         let endpoint = BrandApiEndpoint::SuspendAccount;
+        self.send_deserialized(endpoint, Some(request)).await
+    }
+
+    /// Suspend an existing TradeLocker account.
+    /// Trading is prohibited for suspended accounts and they do not show up in the TradeLocker application.
+    pub async fn set_account_group(
+        &self,
+        request: &SetAccountGroupRequest,
+    ) -> Result<(), Error> {
+        let endpoint = BrandApiEndpoint::SetAccountGroup;
         self.send_deserialized(endpoint, Some(request)).await
     }
 

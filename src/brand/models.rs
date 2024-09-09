@@ -178,3 +178,11 @@ pub struct UpdateAccountStatusResponse {
     pub status: AccountStatus,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct SetAccountGroupRequest {
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+    #[serde(rename = "newGroupId")]
+    pub group_id: String
+}
+
