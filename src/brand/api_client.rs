@@ -1,18 +1,12 @@
 use crate::brand::endpoints::WebservicesApiEndpoint;
 use crate::brand::errors::Error;
-use crate::brand::models::{
-    CreateCtidRequest, CreateCtidResponse, CreateCtraderManagerTokenRequest,
-    CreateCtraderManagerTokenResponse, CreateTraderRequest,
-};
+use crate::brand::models::CreateTraderRequest;
 use crate::brand::{
-    CreateTraderResponse, 
-    GetSymbolsResponse, GetTraderGroupsResponse, GetTradersRequest,
-    GetTradersResponse, LinkCtidRequest, LinkCtidResponse,  SymbolModel,
-    TraderGroupModel, TraderModel, UpdateTraderBalanceRequest, UpdateTraderBalanceResponse,
-    UpdateTraderRequest,
+    CreateTraderResponse, GetSymbolsResponse, GetTraderGroupsResponse, GetTradersRequest,
+    GetTradersResponse, SymbolModel, TraderGroupModel, TraderModel, UpdateTraderBalanceRequest,
+    UpdateTraderBalanceResponse, UpdateTraderRequest,
 };
 use crate::models::ManagerCreds;
-use crate::utils::generate_password_hash;
 use error_chain::bail;
 use http::{Method, StatusCode};
 use reqwest::header::{HeaderMap, HeaderValue};
