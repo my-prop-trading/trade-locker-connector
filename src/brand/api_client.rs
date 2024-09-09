@@ -30,14 +30,14 @@ pub trait WebservicesApiConfig {
 /// A simple yet powerful RESTful API, designed to cover the basic integration requirements for CRM
 /// systems. It offers the capability to handle common CRM related tasks, such as the creation and
 /// updates of users and trading accounts, and performing deposits and withdrawals to those accounts.
-pub struct WebservicesApiClient<C: WebservicesApiConfig> {
+pub struct BrandApiClient<C: WebservicesApiConfig> {
     config: C,
     inner_client: reqwest::Client,
     creds: Arc<dyn ManagerCreds + Send + Sync>,
     auth_token: std::sync::RwLock<Option<String>>,
 }
 
-impl<C: WebservicesApiConfig> WebservicesApiClient<C> {
+impl<C: WebservicesApiConfig> BrandApiClient<C> {
     pub fn new(config: C, creds: Arc<dyn ManagerCreds + Send + Sync>) -> Self {
         Self {
             config,
@@ -45,14 +45,6 @@ impl<C: WebservicesApiConfig> WebservicesApiClient<C> {
             creds,
             auth_token: std::sync::RwLock::new(None),
         }
-    }
-
-    pub fn clear_token(&self) {
-        let _ = self.auth_token.write().unwrap().take();
-    }
-
-    pub fn is_authorized(&self) -> bool {
-        self.auth_token.read().unwrap().is_some()
     }
 
     /// Gets the list of all available symbols on the server.
@@ -111,12 +103,6 @@ impl<C: WebservicesApiConfig> WebservicesApiClient<C> {
         Ok(())
     }
 
-    /// Links a trader entity to a user entity.
-    pub async fn link_ctid(&self, request: &LinkCtidRequest) -> Result<LinkCtidResponse, Error> {
-        let endpoint = WebservicesApiEndpoint::LinkCtid;
-        self.send_deserialized(endpoint, Some(request)).await
-    }
-
     /// Creates a new trader (e.g. account)entity.
     pub async fn create_trader(
         &self,
@@ -124,34 +110,6 @@ impl<C: WebservicesApiConfig> WebservicesApiClient<C> {
     ) -> Result<CreateTraderResponse, Error> {
         let endpoint = WebservicesApiEndpoint::CreateTrader;
         self.send_deserialized(endpoint, Some(request)).await
-    }
-
-    /// Creates a new user entity. The cTID is used to authorize end users in the trading application(s) of their choice
-    pub async fn create_ctid(
-        &self,
-        request: &CreateCtidRequest,
-    ) -> Result<CreateCtidResponse, Error> {
-        let endpoint = WebservicesApiEndpoint::CreateCtid;
-        self.send_deserialized(endpoint, Some(request)).await
-    }
-
-    /// Creates a token and stores it internally for the next requests
-    pub async fn authorize(&self) -> Result<(), Error> {
-        let resp = self.create_token().await?;
-        let mut token_lock = self.auth_token.write().unwrap();
-        *token_lock = Some(resp.token);
-
-        Ok(())
-    }
-
-    pub async fn create_token(&self) -> Result<CreateCtraderManagerTokenResponse, Error> {
-        let request = CreateCtraderManagerTokenRequest {
-            login: self.creds.get_login().await,
-            hashed_password: generate_password_hash(&self.creds.get_password().await),
-        };
-        let endpoint = WebservicesApiEndpoint::CreateManagerToken;
-
-        self.send_deserialized(endpoint, Some(&request)).await
     }
 
     pub async fn send_deserialized<R: Serialize, T: DeserializeOwned + Debug>(
