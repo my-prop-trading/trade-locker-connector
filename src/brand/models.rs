@@ -51,7 +51,7 @@ pub struct TradingDisabledReason {
 
 /// Represents an account with various attributes.
 #[derive(Debug, Serialize, Deserialize)]
-pub struct GetAccountResponse {
+pub struct AccountModel {
     /// The name of the account.
     #[serde(rename = "accountName")]
     pub account_name: String,
@@ -70,7 +70,7 @@ pub struct GetAccountResponse {
 
     /// The type of the account to create (e.g., LIVE, DEMO).
     #[serde(rename = "type")]
-    pub account_type: String,
+    pub account_type: AccountType,
 
     /// The status of the account (e.g., ACTIVE, RESTRICTED, SUSPENDED).
     /// If ACTIVE, trading could be disabled by a risk rule.
@@ -117,4 +117,37 @@ pub struct GetAccountResponse {
     /// The date and time when the account was created.
     #[serde(rename = "createdDateTime")]
     pub created_date_time: String,
+}
+
+#[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
+pub enum AccountType {
+    #[strum(to_string = "DEMO")]
+    #[serde(rename = "DEMO")]
+    Demo,
+    #[strum(to_string = "LIVE")]
+    #[serde(rename = "LIVE")]
+    Live,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CreateAccountRequest {
+    /// The unique identifier for the user (UUID).
+    #[serde(rename = "userId")]
+    pub user_id: String,
+
+    /// The name of the account.
+    #[serde(rename = "accountName")]
+    pub account_name: String,
+
+    /// The type of the account to create (e.g., LIVE).
+    #[serde(rename = "type")]
+    pub account_type: AccountType,
+
+    /// The 3-letter ISO 4217 code of the currency or ticker symbol for the crypto asset of this account.
+    #[serde(rename = "currency")]
+    pub currency: String,
+
+    /// The ID of the group to place the account into. If not provided, placed into the brand's default group.
+    #[serde(rename = "groupId")]
+    pub group_id: Option<String>,
 }

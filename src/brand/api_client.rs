@@ -2,8 +2,8 @@ use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
 use crate::brand::{
-    CheckEmailRequest, CheckEmailResponse, CreateUserResponse, GetAccountRequest,
-    GetAccountResponse, SetUserPasswordRequest,
+    AccountModel, CheckEmailRequest, CheckEmailResponse, CreateAccountRequest,
+    CreateUserResponse, GetAccountRequest, SetUserPasswordRequest,
 };
 use error_chain::bail;
 use http::{Method, StatusCode};
@@ -68,11 +68,16 @@ impl BrandApiClient {
         self.send_deserialized(endpoint, Some(request)).await
     }
 
-    pub async fn get_account(
-        &self,
-        request: &GetAccountRequest,
-    ) -> Result<GetAccountResponse, Error> {
+    pub async fn get_account(&self, request: &GetAccountRequest) -> Result<AccountModel, Error> {
         let endpoint = BrandApiEndpoint::GetAccount;
+        self.send_deserialized(endpoint, Some(request)).await
+    }
+
+    pub async fn create_account(
+        &self,
+        request: &CreateAccountRequest,
+    ) -> Result<AccountModel, Error> {
+        let endpoint = BrandApiEndpoint::CreateAccount;
         self.send_deserialized(endpoint, Some(request)).await
     }
 
