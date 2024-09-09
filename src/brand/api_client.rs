@@ -6,7 +6,6 @@ use crate::brand::{
     GetTradersResponse, SymbolModel, TraderGroupModel, TraderModel, UpdateTraderBalanceRequest,
     UpdateTraderBalanceResponse, UpdateTraderRequest,
 };
-use crate::models::ManagerCreds;
 use error_chain::bail;
 use http::{Method, StatusCode};
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -14,30 +13,25 @@ use reqwest::{RequestBuilder, Response};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::fmt::Debug;
-use std::sync::Arc;
 
-#[async_trait::async_trait]
-pub trait WebservicesApiConfig {
-    async fn get_url(&self) -> String;
+pub struct BrandApiConfig {
+    pub api_url: String,
+    pub api_key: String,
 }
 
 /// A simple yet powerful RESTful API, designed to cover the basic integration requirements for CRM
 /// systems. It offers the capability to handle common CRM related tasks, such as the creation and
 /// updates of users and trading accounts, and performing deposits and withdrawals to those accounts.
-pub struct BrandApiClient<C: WebservicesApiConfig> {
-    config: C,
+pub struct BrandApiClient {
+    config: BrandApiConfig,
     inner_client: reqwest::Client,
-    creds: Arc<dyn ManagerCreds + Send + Sync>,
-    auth_token: std::sync::RwLock<Option<String>>,
 }
 
-impl<C: WebservicesApiConfig> BrandApiClient<C> {
-    pub fn new(config: C, creds: Arc<dyn ManagerCreds + Send + Sync>) -> Self {
+impl BrandApiClient {
+    pub fn new(config: BrandApiConfig) -> Self {
         Self {
             config,
             inner_client: reqwest::Client::new(),
-            creds,
-            auth_token: std::sync::RwLock::new(None),
         }
     }
 
@@ -111,9 +105,8 @@ impl<C: WebservicesApiConfig> BrandApiClient<C> {
         endpoint: WebservicesApiEndpoint,
         request: Option<&R>,
     ) -> Result<T, Error> {
-        let token = self.get_token_cloned();
-        let base_url = self.config.get_url().await;
-        let (builder, url, request) = self.get_builder(&base_url, endpoint, request, &token)?;
+        let base_url = &self.config.api_url;
+        let (builder, url, request) = self.get_builder(base_url, endpoint, request)?;
         let response = builder.send().await;
 
         handle_json(response?, request, &url, endpoint.get_http_method()).await
@@ -124,9 +117,8 @@ impl<C: WebservicesApiConfig> BrandApiClient<C> {
         endpoint: WebservicesApiEndpoint,
         request: Option<&R>,
     ) -> Result<String, Error> {
-        let token = self.get_token_cloned();
-        let base_url = self.config.get_url().await;
-        let (builder, url, request) = self.get_builder(&base_url, endpoint, request, &token)?;
+        let base_url = &self.config.api_url;
+        let (builder, url, request) = self.get_builder(base_url, endpoint, request)?;
         let response = builder.send().await;
 
         handle_text(response?, &request, &url, endpoint.get_http_method()).await
@@ -137,7 +129,6 @@ impl<C: WebservicesApiConfig> BrandApiClient<C> {
         base_url: &str,
         endpoint: WebservicesApiEndpoint,
         request: Option<&R>,
-        token: &Option<String>,
     ) -> Result<(RequestBuilder, String, Option<String>), Error> {
         let headers = self.build_headers();
         let http_method = endpoint.get_http_method();
@@ -145,9 +136,9 @@ impl<C: WebservicesApiConfig> BrandApiClient<C> {
 
         let url = if http_method == Method::GET {
             let query_string = serde_qs::to_string(&request).expect("must be valid model");
-            self.build_full_url(base_url, &endpoint, Some(query_string), token)
+            self.build_full_url(base_url, &endpoint, Some(query_string))
         } else {
-            self.build_full_url(base_url, &endpoint, None, token)
+            self.build_full_url(base_url, &endpoint, None)
         };
 
         let mut builder = self.inner_client.request(http_method, &url);
@@ -170,6 +161,7 @@ impl<C: WebservicesApiConfig> BrandApiClient<C> {
             HeaderValue::from_str(json_content_str).unwrap(),
         );
         custom_headers.insert("Accept", HeaderValue::from_str(json_content_str).unwrap());
+        custom_headers.insert("brand-api-key", self.config.api_key.parse().unwrap());
 
         custom_headers
     }
@@ -192,25 +184,14 @@ impl<C: WebservicesApiConfig> BrandApiClient<C> {
         base_url: &str,
         endpoint: &WebservicesApiEndpoint,
         query_string: Option<String>,
-        token: &Option<String>,
     ) -> String {
         let endpoint_str = String::from(endpoint);
 
-        if let Some(token) = token {
-            let token_param_name = "token";
-
-            if let Some(query_string) = query_string {
-                format!("{base_url}{endpoint_str}?{query_string}&{token_param_name}={token}")
-            } else {
-                format!("{base_url}{endpoint_str}?{token_param_name}={token}")
-            }
+        if let Some(query_string) = query_string {
+            format!("{base_url}{endpoint_str}?{query_string}")
         } else {
             format!("{base_url}{endpoint_str}")
         }
-    }
-
-    fn get_token_cloned(&self) -> Option<String> {
-        (*self.auth_token.read().unwrap()).clone()
     }
 }
 
