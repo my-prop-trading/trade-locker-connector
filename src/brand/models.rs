@@ -197,3 +197,18 @@ pub struct CloseAccountPositionsResponse {
     #[serde(rename = "positionIdsOrderedToBeClosed")]
     pub position_ids: String,
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CreditAccountRequest {
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+    /// Amount of the operation. Positive to add, negative to subtract.
+    pub amount: String,
+    pub note: Option<String>
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CreditAccountResponse {
+    #[serde(rename = "operationId")]
+    pub operation_id: String,
+}

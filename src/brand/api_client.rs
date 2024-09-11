@@ -1,7 +1,12 @@
 use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
-use crate::brand::{AccountModel, UpdateAccountStatusRequest, UpdateAccountStatusResponse, CheckEmailRequest, CheckEmailResponse, CreateAccountRequest, CreateUserResponse, GetAccountRequest, SetUserPasswordRequest, SetAccountGroupRequest, CloseAccountPositionsRequest, CloseAccountPositionsResponse};
+use crate::brand::{
+    AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest,
+    CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest,
+    CreditAccountResponse, GetAccountRequest, SetAccountGroupRequest, SetUserPasswordRequest,
+    UpdateAccountStatusRequest, UpdateAccountStatusResponse,
+};
 use error_chain::bail;
 use http::{Method, StatusCode};
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -105,10 +110,7 @@ impl BrandApiClient {
         self.send_deserialized(endpoint, Some(request)).await
     }
 
-    pub async fn set_account_group(
-        &self,
-        request: &SetAccountGroupRequest,
-    ) -> Result<(), Error> {
+    pub async fn set_account_group(&self, request: &SetAccountGroupRequest) -> Result<(), Error> {
         let endpoint = BrandApiEndpoint::SetAccountGroup;
         self.send_deserialized(endpoint, Some(request)).await
     }
@@ -118,6 +120,16 @@ impl BrandApiClient {
         request: &CloseAccountPositionsRequest,
     ) -> Result<CloseAccountPositionsResponse, Error> {
         let endpoint = BrandApiEndpoint::CloseAccountPositions;
+        self.send_deserialized(endpoint, Some(request)).await
+    }
+
+    /// Add or remove credit to specified account of a user.
+    /// The ID of the resulting operation is not unique across account types (LIVE,DEMO).
+    pub async fn credit_account(
+        &self,
+        request: &CreditAccountRequest,
+    ) -> Result<CreditAccountResponse, Error> {
+        let endpoint = BrandApiEndpoint::CreditAccount;
         self.send_deserialized(endpoint, Some(request)).await
     }
 
