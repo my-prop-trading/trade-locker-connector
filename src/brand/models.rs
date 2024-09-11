@@ -242,55 +242,42 @@ pub struct GetOpenedPositionsRequest {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct OpenedPositionModel {
-    /// The unique identifier for the position.
     #[serde(rename = "positionId")]
     pub id: String,
 
-    /// The account ID associated with the position.
     #[serde(rename = "accountId")]
     pub account_id: String,
 
-    /// The number of lots in the position.
     #[serde(rename = "lots")]
     pub lots: String,
 
-    /// The lot size for the position.
     #[serde(rename = "lotSize")]
     pub lot_size: String,
 
-    /// The number of units in the position.
     #[serde(rename = "units")]
     pub units: String,
 
-    /// The date and time when the position was opened.
     #[serde(rename = "openDateTime")]
     pub open_date_time: DateTime<Utc>,
 
-    /// The profit and loss (PNL) of the position.
     #[serde(rename = "pnl")]
     pub pnl: String,
 
-    /// The swap value for the position.
     #[serde(rename = "swap")]
     pub swap: String,
 
-    /// The stop-loss price for the position.
     #[serde(rename = "slPrice")]
     pub sl_price: Option<String>,
 
-    /// The take-profit price for the position.
     #[serde(rename = "tpPrice")]
     pub tp_price: Option<String>,
 
-    /// The price at which the position was opened.
     #[serde(rename = "openPrice")]
     pub open_price: String,
 
-    /// The side of the position (e.g., BUY or SELL).
     #[serde(rename = "side")]
-    pub side: String,
+    pub side: OpenedPositionSide,
 
-    /// The financial instrument associated with the position (e.g., EURUSD).
     #[serde(rename = "instrument")]
     pub instrument: String,
 }
@@ -325,9 +312,8 @@ pub struct ClosedPositionModel {
     #[serde(rename = "orderType")]
     pub order_type: OrderType,
 
-    /// The side of the position (e.g., Buy).
     #[serde(rename = "positionSide")]
-    pub position_side: PositionSide,
+    pub position_side: ClosedPositionSide,
 
     #[serde(rename = "closeAmount")]
     pub close_amount: String,
@@ -484,13 +470,29 @@ pub enum OrderType {
 }
 
 #[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
-pub enum PositionSide {
+pub enum ClosedPositionSide {
     #[strum(to_string = "Buy")]
     #[serde(rename = "Buy")]
     Buy,
     #[strum(to_string = "Sell")]
     #[serde(rename = "Sell")]
     Sell,
+}
+
+#[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
+pub enum OpenedPositionSide {
+    #[strum(to_string = "BUY")]
+    #[serde(rename = "BUY")]
+    Buy,
+    #[strum(to_string = "SELL")]
+    #[serde(rename = "SELL")]
+    Sell,
+    #[strum(to_string = "SHORT_SELL")]
+    #[serde(rename = "SHORT_SELL")]
+    ShortSell,
+    #[strum(to_string = "BUY_TO_COVER")]
+    #[serde(rename = "BUY_TO_COVER")]
+    BuyToConvert,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
