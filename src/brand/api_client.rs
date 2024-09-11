@@ -4,7 +4,8 @@ use crate::brand::models::CreateUserRequest;
 use crate::brand::{
     AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest,
     CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest,
-    CreditAccountResponse, GetAccountRequest, GetInstrumentsRequest, GetInstrumentsResponse,
+    CreditAccountResponse, GetAccountRequest, GetClosedPositionsRequest,
+    GetClosedPositionsResponse, GetInstrumentsRequest, GetInstrumentsResponse,
     GetOpenedPositionsRequest, GetOpenedPositionsResponse, SetAccountGroupRequest,
     SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse,
 };
@@ -149,6 +150,14 @@ impl BrandApiClient {
         request: &GetOpenedPositionsRequest,
     ) -> Result<GetOpenedPositionsResponse, Error> {
         let endpoint = BrandApiEndpoint::GetOpenedPositions;
+        self.send_deserialized(endpoint, Some(request)).await
+    }
+
+    pub async fn get_closed_positions(
+        &self,
+        request: &GetClosedPositionsRequest,
+    ) -> Result<GetClosedPositionsResponse, Error> {
+        let endpoint = BrandApiEndpoint::GetClosedPositions;
         self.send_deserialized(endpoint, Some(request)).await
     }
 

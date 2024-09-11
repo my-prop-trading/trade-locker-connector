@@ -299,3 +299,203 @@ pub struct OpenedPositionModel {
 pub struct GetOpenedPositionsResponse {
     pub data: Vec<OpenedPositionModel>,
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct GetClosedPositionsRequest {
+    pub account_id: String,
+    pub account_type: AccountType,
+    /// Cursor to fetch the next page of events. If not provided, the first page of events will be returned.
+    /// Must be an integer string, greater than or equal to 0 and less than or equal to 9223372036854775807
+    pub cursor: Option<String>,
+    /// Page size; max 1000, default 20.
+    pub limit: Option<u32>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ClosedPositionModel {
+    #[serde(rename = "instrument")]
+    pub instrument: String,
+
+    #[serde(rename = "openMilliseconds")]
+    pub open_milliseconds: String,
+
+    #[serde(rename = "openDateTime")]
+    pub open_date_time: DateTime<Utc>,
+
+    #[serde(rename = "orderType")]
+    pub order_type: OrderType,
+
+    /// The side of the position (e.g., Buy).
+    #[serde(rename = "positionSide")]
+    pub position_side: PositionSide,
+
+    #[serde(rename = "closeAmount")]
+    pub close_amount: String,
+
+    #[serde(rename = "averageOpenPrice")]
+    pub average_open_price: String,
+
+    #[serde(rename = "closePrice")]
+    pub close_price: String,
+
+    #[serde(rename = "closeMilliseconds")]
+    pub close_milliseconds: String,
+
+    #[serde(rename = "closeDateTime")]
+    pub close_date_time: DateTime<Utc>,
+
+    #[serde(rename = "openAmount")]
+    pub open_amount: String,
+
+    #[serde(rename = "closeTradeId")]
+    pub close_trade_id: String,
+
+    #[serde(rename = "openTradeId")]
+    pub open_trade_id: String,
+
+    #[serde(rename = "closeOrderId")]
+    pub close_order_id: String,
+
+    #[serde(rename = "positionId")]
+    pub position_id: String,
+    #[serde(rename = "openOrderId")]
+    pub open_order_id: String,
+    #[serde(rename = "strategyId")]
+    pub strategy_id: String,
+    #[serde(rename = "slPrice")]
+    pub sl_price: String,
+
+    #[serde(rename = "slOrderType")]
+    pub sl_order_type: SlOrderType,
+
+    #[serde(rename = "slTrailingOffset")]
+    pub sl_trailing_offset: String,
+
+    #[serde(rename = "tpPrice")]
+    pub tp_price: String,
+
+    #[serde(rename = "commission")]
+    pub commission: String,
+
+    #[serde(rename = "swap")]
+    pub swap: String,
+
+    #[serde(rename = "profit")]
+    pub profit: String,
+
+    #[serde(rename = "netProfit")]
+    pub net_profit: String,
+}
+
+/// Represents pagination links with associated parameters.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Links {
+    /// The URL for the next set of results.
+    #[serde(rename = "next")]
+    pub next: NextLink,
+}
+
+/// Represents the next link and its associated parameters.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct NextLink {
+    /// The URL for the next page.
+    pub url: Option<String>,
+
+    /// Parameters associated with the next link.
+    pub params: NextLinkParams,
+}
+
+/// Represents the parameters for the next link.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct NextLinkParams {
+    /// The account number.
+    pub acc_num: String,
+
+    /// The last trade ID.
+    pub last_trade_id: String,
+}
+
+#[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
+pub enum SlOrderType {
+    #[strum(to_string = "STOP")]
+    #[serde(rename = "STOP")]
+    Stop,
+    #[strum(to_string = "STOP_LIMIT")]
+    #[serde(rename = "STOP_LIMIT")]
+    StopLimit,
+    #[strum(to_string = "TRAILING_STOP")]
+    #[serde(rename = "TRAILING_STOP")]
+    TrailingStop,
+}
+
+#[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
+pub enum OrderType {
+    #[strum(to_string = "Market")]
+    #[serde(rename = "Market")]
+    Market,
+
+    #[strum(to_string = "Protective Stop")]
+    #[serde(rename = "Protective Stop")]
+    ProtectiveStop,
+
+    #[strum(to_string = "Stop Loss")]
+    #[serde(rename = "Stop Loss")]
+    StopLoss,
+
+    #[strum(to_string = "Stop")]
+    #[serde(rename = "Stop")]
+    Stop,
+
+    #[strum(to_string = "Stop Out")]
+    #[serde(rename = "Stop Out")]
+    StopOut,
+
+    #[strum(to_string = "Protective Limit")]
+    #[serde(rename = "Protective Limit")]
+    ProtectiveLimit,
+
+    #[strum(to_string = "Take Profit")]
+    #[serde(rename = "Take Profit")]
+    TakeProfit,
+
+    #[strum(to_string = "Limit")]
+    #[serde(rename = "Limit")]
+    Limit,
+
+    #[strum(to_string = "Stop Limit")]
+    #[serde(rename = "Stop Limit")]
+    StopLimit,
+
+    #[strum(to_string = "Trailing Stop Loss")]
+    #[serde(rename = "Trailing Stop Loss")]
+    TrailingStopLoss,
+
+    #[strum(to_string = "Trailing Stop")]
+    #[serde(rename = "Trailing Stop")]
+    TrailingStop,
+
+    #[strum(to_string = "Buy")]
+    #[serde(rename = "Buy")]
+    Buy,
+
+    #[strum(to_string = "Sell")]
+    #[serde(rename = "Sell")]
+    Sell,
+}
+
+#[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
+pub enum PositionSide {
+    #[strum(to_string = "Buy")]
+    #[serde(rename = "Buy")]
+    Buy,
+    #[strum(to_string = "Sell")]
+    #[serde(rename = "Sell")]
+    Sell,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetClosedPositionsResponse {
+    pub data: Vec<ClosedPositionModel>,
+    /// Links to the next page of the report. Use params for the next page URL search params.
+    pub links: Links,
+}
