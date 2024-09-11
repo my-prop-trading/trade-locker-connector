@@ -1,12 +1,7 @@
 use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
-use crate::brand::{
-    AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest,
-    CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest,
-    CreditAccountResponse, GetAccountRequest, SetAccountGroupRequest, SetUserPasswordRequest,
-    UpdateAccountStatusRequest, UpdateAccountStatusResponse,
-};
+use crate::brand::{AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest, CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest, CreditAccountResponse, GetAccountRequest, GetInstrumentsRequest, GetInstrumentsResponse, SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse};
 use error_chain::bail;
 use http::{Method, StatusCode};
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -130,6 +125,14 @@ impl BrandApiClient {
         request: &CreditAccountRequest,
     ) -> Result<CreditAccountResponse, Error> {
         let endpoint = BrandApiEndpoint::CreditAccount;
+        self.send_deserialized(endpoint, Some(request)).await
+    }
+
+    pub async fn get_instruments(
+        &self,
+        request: &GetInstrumentsRequest,
+    ) -> Result<GetInstrumentsResponse, Error> {
+        let endpoint = BrandApiEndpoint::GetInstruments;
         self.send_deserialized(endpoint, Some(request)).await
     }
 

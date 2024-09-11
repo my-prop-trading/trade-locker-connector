@@ -13,6 +13,7 @@ pub enum BrandApiEndpoint {
     SetAccountGroup,
     CloseAccountPositions,
     CreditAccount,
+    GetInstruments,
 }
 
 impl From<&BrandApiEndpoint> for String {
@@ -53,6 +54,9 @@ impl From<&BrandApiEndpoint> for String {
             BrandApiEndpoint::CreditAccount => {
                 format!("/{}/account-operations/credit", api_version)
             }
+            BrandApiEndpoint::GetInstruments => {
+                format!("/{}/brand/instruments", api_version)
+            }
         }
     }
 }
@@ -71,6 +75,7 @@ impl BrandApiEndpoint {
             BrandApiEndpoint::SetAccountGroup => Method::PUT,
             BrandApiEndpoint::CloseAccountPositions => Method::POST,
             BrandApiEndpoint::CreditAccount => Method::POST,
+            BrandApiEndpoint::GetInstruments => Method::POST,
         }
     }
 }
