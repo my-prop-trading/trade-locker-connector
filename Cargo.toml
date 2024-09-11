@@ -22,7 +22,7 @@ futures-channel = "*"
 reqwest = { version = "*", features = ["json"] }
 error-chain = { version = "0.12.4", default-features = false }
 serde_qs = "*"
-chrono = "*"
+chrono = { version = "*", features = ["serde"] }
 uuid = { version = "1.7.0", features = ["v4"] }
 md5 = "0.7.0"
 strum = { version = "0.26", features = ["derive"] }

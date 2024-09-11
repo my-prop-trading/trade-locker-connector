@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use serde::Serialize;
 use serde_derive::Deserialize;
 
@@ -229,4 +230,72 @@ pub struct InstrumentModel {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct GetInstrumentsResponse {
     pub data: Vec<InstrumentModel>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct GetOpenedPositionsRequest {
+    #[serde(rename = "type")]
+    pub account_type: AccountType,
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct OpenedPositionModel {
+    /// The unique identifier for the position.
+    #[serde(rename = "positionId")]
+    pub id: String,
+
+    /// The account ID associated with the position.
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+
+    /// The number of lots in the position.
+    #[serde(rename = "lots")]
+    pub lots: String,
+
+    /// The lot size for the position.
+    #[serde(rename = "lotSize")]
+    pub lot_size: String,
+
+    /// The number of units in the position.
+    #[serde(rename = "units")]
+    pub units: String,
+
+    /// The date and time when the position was opened.
+    #[serde(rename = "openDateTime")]
+    pub open_date_time: DateTime<Utc>,
+
+    /// The profit and loss (PNL) of the position.
+    #[serde(rename = "pnl")]
+    pub pnl: String,
+
+    /// The swap value for the position.
+    #[serde(rename = "swap")]
+    pub swap: String,
+
+    /// The stop-loss price for the position.
+    #[serde(rename = "slPrice")]
+    pub sl_price: Option<String>,
+
+    /// The take-profit price for the position.
+    #[serde(rename = "tpPrice")]
+    pub tp_price: Option<String>,
+
+    /// The price at which the position was opened.
+    #[serde(rename = "openPrice")]
+    pub open_price: String,
+
+    /// The side of the position (e.g., BUY or SELL).
+    #[serde(rename = "side")]
+    pub side: String,
+
+    /// The financial instrument associated with the position (e.g., EURUSD).
+    #[serde(rename = "instrument")]
+    pub instrument: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct GetOpenedPositionsResponse {
+    pub data: Vec<OpenedPositionModel>,
 }
