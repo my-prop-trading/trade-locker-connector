@@ -501,3 +501,20 @@ pub struct GetClosedPositionsResponse {
     /// Links to the next page of the report. Use params for the next page URL search params.
     pub links: Links,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetGroupsRequest {
+    #[serde(rename = "type")]
+    pub account_type: AccountType,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GroupModel {
+    pub name: String,
+    pub id: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetGroupsResponse {
+    pub data: Vec<GroupModel>,
+}

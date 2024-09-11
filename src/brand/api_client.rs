@@ -5,9 +5,10 @@ use crate::brand::{
     AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest,
     CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest,
     CreditAccountResponse, GetAccountRequest, GetClosedPositionsRequest,
-    GetClosedPositionsResponse, GetInstrumentsRequest, GetInstrumentsResponse,
-    GetOpenedPositionsRequest, GetOpenedPositionsResponse, SetAccountGroupRequest,
-    SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse,
+    GetClosedPositionsResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest,
+    GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse,
+    SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest,
+    UpdateAccountStatusResponse,
 };
 use error_chain::bail;
 use http::{Method, StatusCode};
@@ -158,6 +159,11 @@ impl BrandApiClient {
         request: &GetClosedPositionsRequest,
     ) -> Result<GetClosedPositionsResponse, Error> {
         let endpoint = BrandApiEndpoint::GetClosedPositions;
+        self.send_deserialized(endpoint, Some(request)).await
+    }
+
+    pub async fn get_groups(&self, request: &GetGroupsRequest) -> Result<GetGroupsResponse, Error> {
+        let endpoint = BrandApiEndpoint::GetGroups;
         self.send_deserialized(endpoint, Some(request)).await
     }
 
