@@ -18,34 +18,19 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::fmt::Debug;
 
-pub struct BrandApiConfig {
-    pub api_url: String,
-    pub api_key: String,
+#[async_trait::async_trait]
+pub trait BrandApiConfig {
+    async fn get_api_url(&self) -> String;
+    async fn get_api_key(&self) -> String;
 }
 
-impl BrandApiConfig {
-    pub fn new_dev(api_key: impl Into<String>) -> Self {
-        Self {
-            api_url: "https://api-dev.tradelocker.com".to_string(),
-            api_key: api_key.into(),
-        }
-    }
-
-    pub fn new_prod(api_key: impl Into<String>) -> Self {
-        Self {
-            api_url: "https://api.tradelocker.com".to_string(),
-            api_key: api_key.into(),
-        }
-    }
-}
-
-pub struct BrandApiClient {
-    config: BrandApiConfig,
+pub struct BrandApiClient<C: BrandApiConfig> {
+    config: C,
     inner_client: reqwest::Client,
 }
 
-impl BrandApiClient {
-    pub fn new(config: BrandApiConfig) -> Self {
+impl<C: BrandApiConfig> BrandApiClient<C> {
+    pub fn new(config: C) -> Self {
         Self {
             config,
             inner_client: reqwest::Client::new(),
@@ -172,8 +157,8 @@ impl BrandApiClient {
         endpoint: BrandApiEndpoint,
         request: Option<&R>,
     ) -> Result<T, Error> {
-        let base_url = &self.config.api_url;
-        let (builder, url, request) = self.get_builder(base_url, endpoint, request)?;
+        let base_url = &self.config.get_api_url().await;
+        let (builder, url, request) = self.get_builder(base_url, endpoint, request).await?;
         let response = builder.send().await;
 
         handle_json(response?, request, &url, endpoint.get_http_method()).await
@@ -184,20 +169,19 @@ impl BrandApiClient {
         endpoint: BrandApiEndpoint,
         request: Option<&R>,
     ) -> Result<String, Error> {
-        let base_url = &self.config.api_url;
-        let (builder, url, request) = self.get_builder(base_url, endpoint, request)?;
+        let base_url = &self.config.get_api_url().await;
+        let (builder, url, request) = self.get_builder(base_url, endpoint, request).await?;
         let response = builder.send().await;
 
         handle_text(response?, &request, &url, endpoint.get_http_method()).await
     }
 
-    fn get_builder<R: Serialize>(
+    async fn get_builder<R: Serialize>(
         &self,
         base_url: &str,
         endpoint: BrandApiEndpoint,
         request: Option<&R>,
     ) -> Result<(RequestBuilder, String, Option<String>), Error> {
-        let headers = self.build_headers();
         let http_method = endpoint.get_http_method();
         let mut request_json = None;
 
@@ -215,11 +199,12 @@ impl BrandApiClient {
             request_json = Some(body.clone());
             builder = builder.body(body);
         }
+        let headers = self.build_headers().await;
 
         Ok((builder.headers(headers), url, request_json))
     }
 
-    fn build_headers(&self) -> HeaderMap {
+    async fn build_headers(&self) -> HeaderMap {
         let mut custom_headers = HeaderMap::new();
         let json_content_str = "application/json";
 
@@ -228,7 +213,7 @@ impl BrandApiClient {
             HeaderValue::from_str(json_content_str).unwrap(),
         );
         custom_headers.insert("Accept", HeaderValue::from_str(json_content_str).unwrap());
-        custom_headers.insert("brand-api-key", self.config.api_key.parse().unwrap());
+        custom_headers.insert("brand-api-key", self.config.get_api_key().await.parse().unwrap());
 
         custom_headers
     }
