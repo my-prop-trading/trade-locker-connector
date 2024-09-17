@@ -1,8 +1,5 @@
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
-use trade_locker_connector::brand::{
-    AccountType, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest,
-    CreditAccountRequest, UpdateAccountStatusRequest,
-};
+use trade_locker_connector::brand::{AccountType, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, UpdateAccountStatusRequest};
 
 #[tokio::main]
 async fn main() {
@@ -16,7 +13,8 @@ async fn main() {
     //create_account(&brand_api).await;
     //activate_account(&brand_api).await;
     //credit_account(&brand_api).await;
-    close_account_positions(&brand_api).await;
+    //close_account_positions(&brand_api).await;
+    get_account(&brand_api).await;
 }
 
 pub async fn create_user(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
@@ -71,6 +69,16 @@ pub async fn credit_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>)
 pub async fn close_account_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .close_account_positions(&CloseAccountPositionsRequest {
+            account_id: "L#705322".to_string(),
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn get_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .get_account(&GetAccountRequest {
             account_id: "L#705322".to_string(),
         })
         .await;
