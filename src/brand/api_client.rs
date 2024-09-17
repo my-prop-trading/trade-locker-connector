@@ -218,19 +218,6 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         custom_headers
     }
 
-    pub fn build_query_string(&self, params: Vec<(&str, &str)>) -> String {
-        let mut query_string = String::new();
-
-        for (key, value) in params {
-            let param = format!("{key}={value}&");
-            query_string.push_str(&param);
-        }
-
-        query_string.pop(); // remove last & symbol
-
-        query_string
-    }
-
     fn build_full_url(
         &self,
         base_url: &str,

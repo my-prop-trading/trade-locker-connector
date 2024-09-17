@@ -196,7 +196,7 @@ pub struct CloseAccountPositionsRequest {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CloseAccountPositionsResponse {
     #[serde(rename = "positionIdsOrderedToBeClosed")]
-    pub position_ids: String,
+    pub position_ids: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
