@@ -289,14 +289,22 @@ pub struct GetOpenedPositionsResponse {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct GetClosedPositionsRequest {
+    #[serde(rename = "accountId")]
     pub account_id: String,
+    #[serde(rename = "type")]
     pub account_type: AccountType,
     /// Cursor to fetch the next page of events. If not provided, the first page of events will be returned.
     /// Must be an integer string, greater than or equal to 0 and less than or equal to 9223372036854775807
-    pub cursor: Option<String>,
+    pub cursor: String,
     /// Page size; max 1000, default 20.
-    pub limit: Option<u32>,
+    pub limit: String,
 }
+
+pub fn get_default_cursor() -> String {
+    "0".to_string()
+}
+
+
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ClosedPositionModel {
@@ -378,7 +386,7 @@ pub struct ClosedPositionModel {
 pub struct Links {
     /// The URL for the next set of results.
     #[serde(rename = "next")]
-    pub next: NextLink,
+    pub next: Option<NextLink>,
 }
 
 /// Represents the next link and its associated parameters.

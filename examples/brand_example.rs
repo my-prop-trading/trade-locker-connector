@@ -1,5 +1,5 @@
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
-use trade_locker_connector::brand::{AccountType, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, UpdateAccountStatusRequest};
+use trade_locker_connector::brand::{get_default_cursor, AccountType, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetClosedPositionsRequest, GetOpenedPositionsRequest, UpdateAccountStatusRequest};
 
 #[tokio::main]
 async fn main() {
@@ -14,7 +14,9 @@ async fn main() {
     //activate_account(&brand_api).await;
     //credit_account(&brand_api).await;
     //close_account_positions(&brand_api).await;
-    get_account(&brand_api).await;
+    //get_account(&brand_api).await;
+    //get_opened_positions(&brand_api).await;
+    get_closed_positions(&brand_api).await;
 }
 
 pub async fn create_user(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
@@ -80,6 +82,30 @@ pub async fn get_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_account(&GetAccountRequest {
             account_id: "L#705322".to_string(),
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn get_closed_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .get_closed_positions(&GetClosedPositionsRequest {
+            account_id: "L#705322".to_string(),
+            account_type: AccountType::Live,
+            cursor: get_default_cursor(),
+            limit: "1000".to_string(),
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn get_opened_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .get_opened_positions(&GetOpenedPositionsRequest {
+            account_id: "L#705322".to_string(),
+            account_type: AccountType::Live,
         })
         .await;
 
