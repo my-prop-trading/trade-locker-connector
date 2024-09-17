@@ -94,7 +94,7 @@ pub async fn get_closed_positions(rest_client: &BrandApiClient<ExampleBrandApiCo
             account_id: "L#705322".to_string(),
             account_type: AccountType::Live,
             cursor: get_default_cursor(),
-            limit: "1000".to_string(),
+            limit: "1".to_string(),
         })
         .await;
 

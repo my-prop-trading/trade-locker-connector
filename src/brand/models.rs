@@ -301,7 +301,7 @@ pub struct GetClosedPositionsRequest {
 }
 
 pub fn get_default_cursor() -> String {
-    "0".to_string()
+    "9223372036854775807".to_string()
 }
 
 
@@ -314,8 +314,8 @@ pub struct ClosedPositionModel {
     #[serde(rename = "openMilliseconds")]
     pub open_milliseconds: String,
 
-    #[serde(rename = "openDateTime")]
-    pub open_date_time: DateTime<Utc>,
+    //#[serde(rename = "openDateTime")]
+    //pub open_date_time: DateTime<Utc>,
 
     #[serde(rename = "orderType")]
     pub order_type: OrderType,
@@ -335,8 +335,8 @@ pub struct ClosedPositionModel {
     #[serde(rename = "closeMilliseconds")]
     pub close_milliseconds: String,
 
-    #[serde(rename = "closeDateTime")]
-    pub close_date_time: DateTime<Utc>,
+    //#[serde(rename = "closeDateTime")]
+    //pub close_date_time: DateTime<Utc>,
 
     #[serde(rename = "openAmount")]
     pub open_amount: String,
@@ -355,28 +355,22 @@ pub struct ClosedPositionModel {
     #[serde(rename = "openOrderId")]
     pub open_order_id: String,
     #[serde(rename = "strategyId")]
-    pub strategy_id: String,
+    pub strategy_id: Option<String>,
     #[serde(rename = "slPrice")]
-    pub sl_price: String,
+    pub sl_price: Option<String>,
 
     #[serde(rename = "slOrderType")]
-    pub sl_order_type: SlOrderType,
-
+    pub sl_order_type: Option<SlOrderType>,
     #[serde(rename = "slTrailingOffset")]
-    pub sl_trailing_offset: String,
-
+    pub sl_trailing_offset: Option<String>,
     #[serde(rename = "tpPrice")]
-    pub tp_price: String,
-
+    pub tp_price: Option<String>,
     #[serde(rename = "commission")]
     pub commission: String,
-
     #[serde(rename = "swap")]
     pub swap: String,
-
     #[serde(rename = "profit")]
     pub profit: String,
-
     #[serde(rename = "netProfit")]
     pub net_profit: String,
 }
@@ -402,11 +396,13 @@ pub struct NextLink {
 /// Represents the parameters for the next link.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct NextLinkParams {
-    /// The account number.
-    pub acc_num: String,
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+    #[serde(rename = "type")]
+    pub account_type: AccountType,
+    pub cursor: String,
+    pub limit: u32,
 
-    /// The last trade ID.
-    pub last_trade_id: String,
 }
 
 #[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
@@ -525,4 +521,28 @@ pub struct GroupModel {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GetGroupsResponse {
     pub data: Vec<GroupModel>,
+}
+
+mod string_date_format {
+    use chrono::{DateTime, NaiveDateTime, Utc};
+    use serde::{self, Deserialize, Deserializer, Serializer};
+
+    const FORMAT: &'static str = "%Y-%m-%dT%H:%M:%S%.3f"; // yyyy-MM-ddTHH:mm:ss.SSS e.g., 2018-01-01T12:12:12.000
+
+    pub fn serialize<S>(date: &DateTime<Utc>, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let s = format!("{}", date.format(FORMAT));
+        serializer.serialize_str(&s)
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<DateTime<Utc>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        let dt = NaiveDateTime::parse_from_str(&s, FORMAT).map_err(serde::de::Error::custom)?;
+        Ok(DateTime::<Utc>::from_naive_utc_and_offset(dt, Utc))
+    }
 }
