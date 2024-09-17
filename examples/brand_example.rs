@@ -1,5 +1,5 @@
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
-use trade_locker_connector::brand::{get_default_cursor, AccountType, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetClosedPositionsRequest, GetOpenedPositionsRequest, UpdateAccountStatusRequest};
+use trade_locker_connector::brand::{get_default_cursor, AccountType, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetClosedPositionsRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, UpdateAccountStatusRequest};
 
 #[tokio::main]
 async fn main() {
@@ -11,12 +11,17 @@ async fn main() {
     let brand_api = BrandApiClient::new(config);
     //create_user(&brand_api).await;
     //create_account(&brand_api).await;
-    //activate_account(&brand_api).await;
+    activate_account(&brand_api).await;
     //credit_account(&brand_api).await;
     //close_account_positions(&brand_api).await;
     //get_account(&brand_api).await;
     //get_opened_positions(&brand_api).await;
-    get_closed_positions(&brand_api).await;
+    //get_closed_positions(&brand_api).await;
+    check_email(&brand_api).await;
+    //get_groups(&brand_api).await;
+    //get_instruments(&brand_api).await;
+    //restrict_account(&brand_api).await;
+    //suspend_account(&brand_api).await;
 }
 
 pub async fn create_user(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
@@ -106,6 +111,56 @@ pub async fn get_opened_positions(rest_client: &BrandApiClient<ExampleBrandApiCo
         .get_opened_positions(&GetOpenedPositionsRequest {
             account_id: "L#705322".to_string(),
             account_type: AccountType::Live,
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn check_email(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .check_email(&CheckEmailRequest {
+            email: "trade-locker-test123@mailinator.com".to_string(),
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn get_groups(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .get_groups(&GetGroupsRequest {
+            account_type: AccountType::Live,
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn get_instruments(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .get_instruments(&GetInstrumentsRequest {
+            account_type: AccountType::Live,
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn restrict_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .restrict_account(&UpdateAccountStatusRequest {
+            account_id: "L#705322".to_string(),
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn suspend_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .suspend_account(&UpdateAccountStatusRequest {
+            account_id: "L#705322".to_string(),
         })
         .await;
 
