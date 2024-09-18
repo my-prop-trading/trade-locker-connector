@@ -17,6 +17,7 @@ pub enum BrandApiEndpoint {
     GetOpenedPositions,
     GetClosedPositions,
     GetGroups,
+    GetAccountsReport,
 }
 
 impl From<&BrandApiEndpoint> for String {
@@ -65,10 +66,19 @@ impl From<&BrandApiEndpoint> for String {
                 format!("/{api_name}/{}/positions/get-open-positions", api_version)
             }
             BrandApiEndpoint::GetClosedPositions => {
-                format!("/{api_name}/{}/reports/close-trades-history-report", api_version)
+                format!(
+                    "/{api_name}/{}/reports/close-trades-history-report",
+                    api_version
+                )
             }
             BrandApiEndpoint::GetGroups => {
                 format!("/{api_name}/{}/groups/all", api_version)
+            }
+            BrandApiEndpoint::GetAccountsReport => {
+                format!(
+                    "/{api_name}/{}/reports/account-statement-report",
+                    api_version
+                )
             }
         }
     }
@@ -92,6 +102,7 @@ impl BrandApiEndpoint {
             BrandApiEndpoint::GetOpenedPositions => Method::POST,
             BrandApiEndpoint::GetClosedPositions => Method::POST,
             BrandApiEndpoint::GetGroups => Method::POST,
+            BrandApiEndpoint::GetAccountsReport => Method::POST,
         }
     }
 }

@@ -1,15 +1,7 @@
 use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
-use crate::brand::{
-    AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest,
-    CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest,
-    CreditAccountResponse, GetAccountRequest, GetClosedPositionsRequest,
-    GetClosedPositionsResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest,
-    GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse,
-    SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest,
-    UpdateAccountStatusResponse,
-};
+use crate::brand::{AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest, CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest, CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse, GetClosedPositionsRequest, GetClosedPositionsResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest, GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse, SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse};
 use error_chain::bail;
 use http::{Method, StatusCode};
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -152,7 +144,12 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         self.send_deserialized(endpoint, Some(request)).await
     }
 
-    pub async fn send_deserialized<R: Serialize, T: DeserializeOwned + Debug>(
+    pub async fn get_accounts_report(&self, request: &GetAccountsReportRequest) -> Result<GetAccountsReportResponse, Error> {
+        let endpoint = BrandApiEndpoint::GetAccountsReport;
+        self.send_deserialized(endpoint, Some(request)).await
+    }
+
+    async fn send_deserialized<R: Serialize, T: DeserializeOwned + Debug>(
         &self,
         endpoint: BrandApiEndpoint,
         request: Option<&R>,
@@ -162,18 +159,6 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         let response = builder.send().await;
 
         handle_json(response?, request, &url, endpoint.get_http_method()).await
-    }
-
-    pub async fn send<R: Serialize>(
-        &self,
-        endpoint: BrandApiEndpoint,
-        request: Option<&R>,
-    ) -> Result<String, Error> {
-        let base_url = &self.config.get_api_url().await;
-        let (builder, url, request) = self.get_builder(base_url, endpoint, request).await?;
-        let response = builder.send().await;
-
-        handle_text(response?, &request, &url, endpoint.get_http_method()).await
     }
 
     async fn get_builder<R: Serialize>(

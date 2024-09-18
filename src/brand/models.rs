@@ -304,8 +304,6 @@ pub fn get_default_cursor() -> String {
     "9223372036854775807".to_string()
 }
 
-
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ClosedPositionModel {
     #[serde(rename = "instrument")]
@@ -316,7 +314,6 @@ pub struct ClosedPositionModel {
 
     //#[serde(rename = "openDateTime")]
     //pub open_date_time: DateTime<Utc>,
-
     #[serde(rename = "orderType")]
     pub order_type: OrderType,
 
@@ -337,7 +334,6 @@ pub struct ClosedPositionModel {
 
     //#[serde(rename = "closeDateTime")]
     //pub close_date_time: DateTime<Utc>,
-
     #[serde(rename = "openAmount")]
     pub open_amount: String,
 
@@ -402,7 +398,6 @@ pub struct NextLinkParams {
     pub account_type: AccountType,
     pub cursor: String,
     pub limit: u32,
-
 }
 
 #[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
@@ -521,4 +516,36 @@ pub struct GroupModel {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GetGroupsResponse {
     pub data: Vec<GroupModel>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetAccountsReportRequest {
+    #[serde(rename = "type")]
+    pub account_type: AccountType,
+    #[serde(rename = "accountIds")]
+    pub account_ids: Vec<String>,
+    #[serde(rename = "accountStatus")]
+    pub account_status: AccountStatus,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetAccountsReportResponse {
+    #[serde(rename = "type")]
+    pub data: Vec<AccountReportModel>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AccountReportModel {
+    #[serde(rename = "accountId")]
+    pub account_id: Vec<String>,
+    pub balance: String,
+    pub credit: String,
+    pub equity: String,
+    pub pnl: String,
+    #[serde(rename = "marginUsed")]
+    pub margin_used: String,
+    #[serde(rename = "marginAvailable")]
+    pub margin_available: String,
+    #[serde(rename = "userGroupId")]
+    pub user_group_id: String,
 }
