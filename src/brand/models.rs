@@ -288,7 +288,7 @@ pub struct GetOpenedPositionsResponse {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct GetClosedPositionsRequest {
+pub struct GetClosedTradesReportRequest {
     #[serde(rename = "accountId")]
     pub account_id: String,
     #[serde(rename = "type")]
@@ -305,7 +305,7 @@ pub fn get_default_cursor() -> String {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct ClosedPositionModel {
+pub struct ClosedTradeReportModel {
     #[serde(rename = "instrument")]
     pub instrument: String,
 
@@ -373,25 +373,25 @@ pub struct ClosedPositionModel {
 
 /// Represents pagination links with associated parameters.
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Links {
+pub struct PageLinks {
     /// The URL for the next set of results.
     #[serde(rename = "next")]
-    pub next: Option<NextLink>,
+    pub next: Option<NextPageLink>,
 }
 
 /// Represents the next link and its associated parameters.
 #[derive(Debug, Serialize, Deserialize)]
-pub struct NextLink {
+pub struct NextPageLink {
     /// The URL for the next page.
     pub url: Option<String>,
 
     /// Parameters associated with the next link.
-    pub params: NextLinkParams,
+    pub params: NextPageLinkParams,
 }
 
 /// Represents the parameters for the next link.
 #[derive(Debug, Serialize, Deserialize)]
-pub struct NextLinkParams {
+pub struct NextPageLinkParams {
     #[serde(rename = "accountId")]
     pub account_id: String,
     #[serde(rename = "type")]
@@ -495,10 +495,10 @@ pub enum OpenedPositionSide {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct GetClosedPositionsResponse {
-    pub data: Vec<ClosedPositionModel>,
+pub struct GetClosedTradesReportResponse {
+    pub data: Vec<ClosedTradeReportModel>,
     /// Links to the next page of the report. Use params for the next page URL search params.
-    pub links: Links,
+    pub links: PageLinks,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

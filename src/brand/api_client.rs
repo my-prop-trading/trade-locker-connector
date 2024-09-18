@@ -1,7 +1,7 @@
 use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
-use crate::brand::{AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest, CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest, CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse, GetClosedPositionsRequest, GetClosedPositionsResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest, GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse, SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse};
+use crate::brand::{AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest, CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest, CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse, GetClosedTradesReportRequest, GetClosedTradesReportResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest, GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse, SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse};
 use error_chain::bail;
 use http::{Method, StatusCode};
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -131,11 +131,11 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         self.send_deserialized(endpoint, Some(request)).await
     }
 
-    pub async fn get_closed_positions(
+    pub async fn get_closed_trades_report(
         &self,
-        request: &GetClosedPositionsRequest,
-    ) -> Result<GetClosedPositionsResponse, Error> {
-        let endpoint = BrandApiEndpoint::GetClosedPositions;
+        request: &GetClosedTradesReportRequest,
+    ) -> Result<GetClosedTradesReportResponse, Error> {
+        let endpoint = BrandApiEndpoint::GetClosedTradesReport;
         self.send_deserialized(endpoint, Some(request)).await
     }
 

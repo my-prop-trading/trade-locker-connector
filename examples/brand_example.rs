@@ -1,5 +1,5 @@
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
-use trade_locker_connector::brand::{get_default_cursor, AccountType, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetClosedPositionsRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, UpdateAccountStatusRequest};
+use trade_locker_connector::brand::{get_default_cursor, AccountType, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, UpdateAccountStatusRequest};
 
 #[tokio::main]
 async fn main() {
@@ -95,7 +95,7 @@ pub async fn get_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
 
 pub async fn get_closed_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
-        .get_closed_positions(&GetClosedPositionsRequest {
+        .get_closed_trades_report(&GetClosedTradesReportRequest {
             account_id: "L#705322".to_string(),
             account_type: AccountType::Live,
             cursor: get_default_cursor(),
