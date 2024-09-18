@@ -537,7 +537,7 @@ pub struct GetAccountsReportResponse {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AccountReportModel {
     #[serde(rename = "accountId")]
-    pub account_id: Vec<String>,
+    pub account_id: String,
     pub balance: String,
     pub credit: String,
     pub equity: String,
