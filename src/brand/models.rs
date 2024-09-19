@@ -295,9 +295,11 @@ pub struct GetClosedTradesReportRequest {
     pub account_type: AccountType,
     /// Cursor to fetch the next page of events. If not provided, the first page of events will be returned.
     /// Must be an integer string, greater than or equal to 0 and less than or equal to 9223372036854775807
-    pub cursor: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cursor: Option<String>,
     /// Page size; max 1000, default 20.
-    pub limit: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub limit: Option<String>,
 }
 
 pub fn get_default_cursor() -> String {
@@ -523,14 +525,15 @@ pub struct GetAccountsReportRequest {
     #[serde(rename = "type")]
     pub account_type: AccountType,
     #[serde(rename = "accountIds")]
-    pub account_ids: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub account_ids: Option<Vec<String>>,
     #[serde(rename = "accountStatus")]
-    pub account_status: AccountStatus,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub account_status: Option<AccountStatus>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GetAccountsReportResponse {
-    #[serde(rename = "type")]
     pub data: Vec<AccountReportModel>,
 }
 

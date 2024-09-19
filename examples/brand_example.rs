@@ -1,5 +1,10 @@
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
-use trade_locker_connector::brand::{get_default_cursor, AccountType, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, UpdateAccountStatusRequest};
+use trade_locker_connector::brand::{
+    AccountType, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest,
+    CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetAccountsReportRequest,
+    GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest,
+    GetOpenedPositionsRequest, UpdateAccountStatusRequest,
+};
 
 #[tokio::main]
 async fn main() {
@@ -11,17 +16,18 @@ async fn main() {
     let brand_api = BrandApiClient::new(config);
     //create_user(&brand_api).await;
     //create_account(&brand_api).await;
-    activate_account(&brand_api).await;
+    //activate_account(&brand_api).await;
     //credit_account(&brand_api).await;
     //close_account_positions(&brand_api).await;
     //get_account(&brand_api).await;
     //get_opened_positions(&brand_api).await;
     //get_closed_positions(&brand_api).await;
-    check_email(&brand_api).await;
+    //check_email(&brand_api).await;
     //get_groups(&brand_api).await;
     //get_instruments(&brand_api).await;
     //restrict_account(&brand_api).await;
     //suspend_account(&brand_api).await;
+    get_accounts_report(&brand_api).await;
 }
 
 pub async fn create_user(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
@@ -98,8 +104,8 @@ pub async fn get_closed_positions(rest_client: &BrandApiClient<ExampleBrandApiCo
         .get_closed_trades_report(&GetClosedTradesReportRequest {
             account_id: "L#705322".to_string(),
             account_type: AccountType::Live,
-            cursor: get_default_cursor(),
-            limit: "1".to_string(),
+            cursor: None,
+            limit: None,
         })
         .await;
 
@@ -161,6 +167,18 @@ pub async fn suspend_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>
     let resp = rest_client
         .suspend_account(&UpdateAccountStatusRequest {
             account_id: "L#705322".to_string(),
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn get_accounts_report(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .get_accounts_report(&GetAccountsReportRequest {
+            account_type: AccountType::Live,
+            account_ids: None,
+            account_status: None,
         })
         .await;
 
