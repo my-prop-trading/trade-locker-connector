@@ -54,8 +54,10 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
     }
 
     pub async fn set_user_password(&self, request: &SetUserPasswordRequest) -> Result<(), Error> {
-        let endpoint = BrandApiEndpoint::CheckEmail;
-        self.send_deserialized(endpoint, Some(request)).await
+        let endpoint = BrandApiEndpoint::SetUserPassword;
+        let _resp = self.send(endpoint, Some(request)).await?;
+        
+        Ok(())
     }
 
     pub async fn get_account(&self, request: &GetAccountRequest) -> Result<AccountModel, Error> {
@@ -164,6 +166,18 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         let endpoint = BrandApiEndpoint::GetApiStatus;
         let request: Option<&String> = None;
         self.send_deserialized(endpoint, request).await
+    }
+
+    async fn send<R: Serialize>(
+        &self,
+        endpoint: BrandApiEndpoint,
+        request: Option<&R>,
+    ) -> Result<String, Error> {
+        let base_url = &self.config.get_api_url().await;
+        let (builder, url, request) = self.get_builder(base_url, endpoint, request).await?;
+        let response = builder.send().await;
+
+        handle_text(response?, &request, &url, endpoint.get_http_method()).await
     }
 
     async fn send_deserialized<R: Serialize, T: DeserializeOwned + Debug>(

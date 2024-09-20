@@ -28,8 +28,8 @@ async fn main() {
     //restrict_account(&brand_api).await;
     //suspend_account(&brand_api).await;
     //get_accounts_report(&brand_api).await;
-    get_api_status(&brand_api).await;
-    //set_user_password(&brand_api).await
+    //get_api_status(&brand_api).await;
+    set_user_password(&brand_api).await
 }
 
 pub fn get_user_id() -> String {
