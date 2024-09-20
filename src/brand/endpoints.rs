@@ -18,7 +18,7 @@ pub enum BrandApiEndpoint {
     GetClosedTradesReport,
     GetGroups,
     GetAccountsReport,
-    ApiReady,
+    GetApiStatus,
     ApiAlive,
 }
 
@@ -82,7 +82,7 @@ impl From<&BrandApiEndpoint> for String {
                     api_version
                 )
             }
-            BrandApiEndpoint::ApiReady => {
+            BrandApiEndpoint::GetApiStatus => {
                 format!("/{api_name}/alive")
             }
             BrandApiEndpoint::ApiAlive => {
@@ -111,7 +111,7 @@ impl BrandApiEndpoint {
             BrandApiEndpoint::GetClosedTradesReport => Method::POST,
             BrandApiEndpoint::GetGroups => Method::POST,
             BrandApiEndpoint::GetAccountsReport => Method::POST,
-            BrandApiEndpoint::ApiReady => Method::GET,
+            BrandApiEndpoint::GetApiStatus => Method::GET,
             BrandApiEndpoint::ApiAlive => Method::GET,
         }
     }

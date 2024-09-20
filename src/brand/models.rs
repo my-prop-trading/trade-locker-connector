@@ -552,3 +552,8 @@ pub struct AccountReportModel {
     #[serde(rename = "userGroupId")]
     pub user_group_id: String,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetApiStatusResponse {
+    pub status: String,
+}

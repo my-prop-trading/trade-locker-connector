@@ -1,7 +1,15 @@
 use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
-use crate::brand::{AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest, CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest, CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse, GetClosedTradesReportRequest, GetClosedTradesReportResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest, GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse, SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse};
+use crate::brand::{
+    AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest,
+    CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest,
+    CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse,
+    GetApiStatusResponse, GetClosedTradesReportRequest, GetClosedTradesReportResponse,
+    GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest, GetInstrumentsResponse,
+    GetOpenedPositionsRequest, GetOpenedPositionsResponse, SetAccountGroupRequest,
+    SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse,
+};
 use error_chain::bail;
 use http::{Method, StatusCode};
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -144,9 +152,18 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         self.send_deserialized(endpoint, Some(request)).await
     }
 
-    pub async fn get_accounts_report(&self, request: &GetAccountsReportRequest) -> Result<GetAccountsReportResponse, Error> {
+    pub async fn get_accounts_report(
+        &self,
+        request: &GetAccountsReportRequest,
+    ) -> Result<GetAccountsReportResponse, Error> {
         let endpoint = BrandApiEndpoint::GetAccountsReport;
         self.send_deserialized(endpoint, Some(request)).await
+    }
+
+    pub async fn get_api_status(&self) -> Result<GetApiStatusResponse, Error> {
+        let endpoint = BrandApiEndpoint::GetApiStatus;
+        let request: Option<&String> = None;
+        self.send_deserialized(endpoint, request).await
     }
 
     async fn send_deserialized<R: Serialize, T: DeserializeOwned + Debug>(
@@ -198,7 +215,10 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
             HeaderValue::from_str(json_content_str).unwrap(),
         );
         custom_headers.insert("Accept", HeaderValue::from_str(json_content_str).unwrap());
-        custom_headers.insert("brand-api-key", self.config.get_api_key().await.parse().unwrap());
+        custom_headers.insert(
+            "brand-api-key",
+            self.config.get_api_key().await.parse().unwrap(),
+        );
 
         custom_headers
     }
