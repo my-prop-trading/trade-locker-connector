@@ -3,7 +3,7 @@ use trade_locker_connector::brand::{
     AccountType, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest,
     CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetAccountsReportRequest,
     GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest,
-    GetOpenedPositionsRequest, UpdateAccountStatusRequest,
+    GetOpenedPositionsRequest, SetUserPasswordRequest, UpdateAccountStatusRequest,
 };
 
 #[tokio::main]
@@ -27,7 +27,20 @@ async fn main() {
     //get_instruments(&brand_api).await;
     //restrict_account(&brand_api).await;
     //suspend_account(&brand_api).await;
-    get_accounts_report(&brand_api).await;
+    //get_accounts_report(&brand_api).await;
+    set_user_password(&brand_api).await
+}
+
+pub fn get_user_id() -> String {
+    "63f3c61e-e11a-495c-82a4-003b244e8434".to_string()
+}
+
+pub fn get_account_id() -> String {
+    "L#705322".to_string()
+}
+
+pub fn get_password() -> String {
+    "Qwerty!123".to_string()
 }
 
 pub async fn create_user(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
@@ -46,7 +59,7 @@ pub async fn create_user(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
 pub async fn create_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .create_account(&CreateAccountRequest {
-            user_id: "63f3c61e-e11a-495c-82a4-003b244e8434".to_string(),
+            user_id: get_user_id(),
             account_name: "test123".to_string(),
             account_type: AccountType::Live,
             currency: "USD".to_string(),
@@ -60,7 +73,7 @@ pub async fn create_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>)
 pub async fn activate_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .activate_account(&UpdateAccountStatusRequest {
-            account_id: "L#705322".to_string(),
+            account_id: get_account_id(),
         })
         .await;
 
@@ -70,7 +83,7 @@ pub async fn activate_account(rest_client: &BrandApiClient<ExampleBrandApiConfig
 pub async fn credit_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .credit_account(&CreditAccountRequest {
-            account_id: "L#705322".to_string(),
+            account_id: get_account_id(),
             amount: "10000".to_string(),
             note: None,
         })
@@ -82,7 +95,7 @@ pub async fn credit_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>)
 pub async fn close_account_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .close_account_positions(&CloseAccountPositionsRequest {
-            account_id: "L#705322".to_string(),
+            account_id: get_account_id(),
         })
         .await;
 
@@ -92,7 +105,7 @@ pub async fn close_account_positions(rest_client: &BrandApiClient<ExampleBrandAp
 pub async fn get_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_account(&GetAccountRequest {
-            account_id: "L#705322".to_string(),
+            account_id: get_account_id(),
         })
         .await;
 
@@ -102,7 +115,7 @@ pub async fn get_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
 pub async fn get_closed_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_closed_trades_report(&GetClosedTradesReportRequest {
-            account_id: "L#705322".to_string(),
+            account_id: get_account_id(),
             account_type: AccountType::Live,
             cursor: None,
             limit: None,
@@ -115,7 +128,7 @@ pub async fn get_closed_positions(rest_client: &BrandApiClient<ExampleBrandApiCo
 pub async fn get_opened_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_opened_positions(&GetOpenedPositionsRequest {
-            account_id: "L#705322".to_string(),
+            account_id: get_account_id(),
             account_type: AccountType::Live,
         })
         .await;
@@ -156,7 +169,7 @@ pub async fn get_instruments(rest_client: &BrandApiClient<ExampleBrandApiConfig>
 pub async fn restrict_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .restrict_account(&UpdateAccountStatusRequest {
-            account_id: "L#705322".to_string(),
+            account_id: get_account_id(),
         })
         .await;
 
@@ -166,7 +179,7 @@ pub async fn restrict_account(rest_client: &BrandApiClient<ExampleBrandApiConfig
 pub async fn suspend_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .suspend_account(&UpdateAccountStatusRequest {
-            account_id: "L#705322".to_string(),
+            account_id: get_account_id(),
         })
         .await;
 
@@ -179,6 +192,17 @@ pub async fn get_accounts_report(rest_client: &BrandApiClient<ExampleBrandApiCon
             account_type: AccountType::Live,
             account_ids: None,
             account_status: None,
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn set_user_password(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .set_user_password(&SetUserPasswordRequest {
+            user_id: get_user_id(),
+            password: get_password(),
         })
         .await;
 
