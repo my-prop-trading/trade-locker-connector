@@ -19,7 +19,7 @@ pub enum BrandApiEndpoint {
     GetGroups,
     GetAccountsReport,
     GetApiStatus,
-    ApiAlive,
+    IsApiAlive,
 }
 
 impl From<&BrandApiEndpoint> for String {
@@ -83,10 +83,10 @@ impl From<&BrandApiEndpoint> for String {
                 )
             }
             BrandApiEndpoint::GetApiStatus => {
-                format!("/{api_name}/alive")
-            }
-            BrandApiEndpoint::ApiAlive => {
                 format!("/{api_name}/ready")
+            }
+            BrandApiEndpoint::IsApiAlive => {
+                format!("/{api_name}/alive")
             }
         }
     }
@@ -112,7 +112,7 @@ impl BrandApiEndpoint {
             BrandApiEndpoint::GetGroups => Method::POST,
             BrandApiEndpoint::GetAccountsReport => Method::POST,
             BrandApiEndpoint::GetApiStatus => Method::GET,
-            BrandApiEndpoint::ApiAlive => Method::GET,
+            BrandApiEndpoint::IsApiAlive => Method::GET,
         }
     }
 }
