@@ -19,18 +19,18 @@ async fn main() {
     };
     let brand_api = BrandApiClient::new(config);
     let instant = Instant::now();
-    //load_test(&brand_api).await;
+    load_test(&brand_api).await;
     //is_api_alive(&brand_api).await;
     //create_user(&brand_api).await;
-    create_account(&brand_api).await;
+    //create_account(&brand_api).await;
     //activate_account(&brand_api).await;
     //credit_account(&brand_api).await;
     //close_account_positions(&brand_api).await;
-    get_account(&brand_api).await;
+    //get_account(&brand_api).await;
     //get_opened_positions(&brand_api).await;
     //get_closed_positions(&brand_api).await;
     //check_email(&brand_api).await;
-    get_groups(&brand_api).await;
+    //get_groups(&brand_api).await;
     //get_instruments(&brand_api).await;
     //restrict_account(&brand_api).await;
     //suspend_account(&brand_api).await;
@@ -240,11 +240,11 @@ pub async fn is_api_alive(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
 pub async fn load_test(
     rest_client: &BrandApiClient<ExampleBrandApiConfig>,
 ) {
-    let max_parallel_requests: usize = 50;
-    let num_requests: usize = 5000;
+    let max_parallel_requests: usize = 1000;
+    let num_requests: usize = 50000;
     let semaphore = Arc::new(Semaphore::new(max_parallel_requests));
 
-    let futures = (0..num_requests).map(|_| {
+    let futures = (0..num_requests).map(|i| {
         let semaphore = Arc::clone(&semaphore);
 
         async move {
@@ -252,8 +252,10 @@ pub async fn load_test(
                 .acquire()
                 .await
                 .expect("Semaphore wasn't been closed");
+            
+            println!("send request #{i}");
 
-            get_accounts_report(rest_client).await
+            get_opened_positions(rest_client).await
         }
     });
 
