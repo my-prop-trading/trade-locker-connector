@@ -56,7 +56,7 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
     pub async fn set_user_password(&self, request: &SetUserPasswordRequest) -> Result<(), Error> {
         let endpoint = BrandApiEndpoint::SetUserPassword;
         let _resp = self.send(endpoint, Some(request)).await?;
-        
+
         Ok(())
     }
 
@@ -166,6 +166,14 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         let endpoint = BrandApiEndpoint::GetApiStatus;
         let request: Option<&String> = None;
         self.send_deserialized(endpoint, request).await
+    }
+
+    pub async fn is_api_alive(&self) -> Result<bool, Error> {
+        let endpoint = BrandApiEndpoint::IsApiAlive;
+        let request: Option<&String> = None;
+        let resp = self.send(endpoint, request).await?;
+
+        Ok(resp == "1")
     }
 
     async fn send<R: Serialize>(

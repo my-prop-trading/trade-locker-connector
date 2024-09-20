@@ -14,6 +14,7 @@ async fn main() {
         api_key,
     };
     let brand_api = BrandApiClient::new(config);
+    is_api_alive(&brand_api).await;
     //create_user(&brand_api).await;
     //create_account(&brand_api).await;
     //activate_account(&brand_api).await;
@@ -29,7 +30,7 @@ async fn main() {
     //suspend_account(&brand_api).await;
     //get_accounts_report(&brand_api).await;
     //get_api_status(&brand_api).await;
-    set_user_password(&brand_api).await
+    //set_user_password(&brand_api).await
 }
 
 pub fn get_user_id() -> String {
@@ -215,6 +216,14 @@ pub async fn set_user_password(rest_client: &BrandApiClient<ExampleBrandApiConfi
 pub async fn get_api_status(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_api_status()
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn is_api_alive(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .is_api_alive()
         .await;
 
     println!("{:?}", resp)
