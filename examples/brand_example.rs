@@ -43,11 +43,15 @@ pub fn get_password() -> String {
     "Qwerty!123".to_string()
 }
 
+pub fn get_email() -> String {
+    "trade-locker-test123@mailinator.com".to_string()
+}
+
 pub async fn create_user(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .create_user(&CreateUserRequest {
-            email: "trade-locker-test123@mailinator.com".to_string(),
-            password: "Qwerty123!".to_string(),
+            email: get_email(),
+            password: get_password(),
             first_name: Some("test".to_string()),
             last_name: Some("test".to_string()),
         })
