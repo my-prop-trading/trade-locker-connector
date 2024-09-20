@@ -143,7 +143,7 @@ pub async fn get_opened_positions(rest_client: &BrandApiClient<ExampleBrandApiCo
 pub async fn check_email(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .check_email(&CheckEmailRequest {
-            email: "trade-locker-test123@mailinator.com".to_string(),
+            email: get_email(),
         })
         .await;
 
