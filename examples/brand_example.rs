@@ -1,3 +1,7 @@
+use futures_util::future::join_all;
+use std::sync::Arc;
+use tokio::sync::Semaphore;
+use tokio::time::Instant;
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
 use trade_locker_connector::brand::{
     AccountType, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest,
@@ -14,7 +18,9 @@ async fn main() {
         api_key,
     };
     let brand_api = BrandApiClient::new(config);
-    is_api_alive(&brand_api).await;
+    let instant = Instant::now();
+    load_test(&brand_api).await;
+    //is_api_alive(&brand_api).await;
     //create_user(&brand_api).await;
     //create_account(&brand_api).await;
     //activate_account(&brand_api).await;
@@ -31,6 +37,8 @@ async fn main() {
     //get_accounts_report(&brand_api).await;
     //get_api_status(&brand_api).await;
     //set_user_password(&brand_api).await
+
+    println!("elapsed time: {:?}", instant.elapsed());
 }
 
 pub fn get_user_id() -> String {
@@ -214,19 +222,65 @@ pub async fn set_user_password(rest_client: &BrandApiClient<ExampleBrandApiConfi
 }
 
 pub async fn get_api_status(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
-    let resp = rest_client
-        .get_api_status()
-        .await;
+    let resp = rest_client.get_api_status().await;
 
     println!("{:?}", resp)
 }
 
 pub async fn is_api_alive(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
-    let resp = rest_client
-        .is_api_alive()
-        .await;
+    let resp = rest_client.is_api_alive().await;
 
     println!("{:?}", resp)
+}
+
+pub async fn load_test(
+    rest_client: &BrandApiClient<ExampleBrandApiConfig>,
+) {
+    let max_parallel_requests: usize = 50;
+    let num_requests: usize = 5000;
+    let semaphore = Arc::new(Semaphore::new(max_parallel_requests));
+
+    let futures = (0..num_requests).map(|_| {
+        let semaphore = Arc::clone(&semaphore);
+
+        async move {
+            let _permit = semaphore
+                .acquire()
+                .await
+                .expect("Semaphore wasn't been closed");
+
+            get_accounts_report(rest_client).await
+        }
+    });
+
+    _ = join_all(futures).await;
+}
+
+pub async fn load_test_generic<F, Fut>(custom_fn: F)
+where
+    F: Fn() -> Fut + Send + Sync + Clone + 'static,
+    Fut: std::future::Future<Output = ()> + Send,
+{
+    let max_parallel_requests = 100;
+    let num_requests = 500;
+    let semaphore = Arc::new(Semaphore::new(max_parallel_requests));
+
+    let futures = (0..num_requests).map(|_| {
+        let semaphore = Arc::clone(&semaphore);
+        let custom_fn = custom_fn.clone(); // Clone the custom function to avoid moving it
+
+        async move {
+            // limit by max_concurrent_requests
+            let _permit = semaphore
+                .acquire()
+                .await
+                .expect("Semaphore wasn't been closed");
+
+            custom_fn().await
+        }
+    });
+
+    _ = join_all(futures).await;
 }
 
 pub struct ExampleBrandApiConfig {
