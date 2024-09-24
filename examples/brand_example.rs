@@ -14,7 +14,7 @@ use trade_locker_connector::brand::{
 async fn main() {
     let api_key = std::env::var("TRADE_LOCKER_API_KEY").unwrap();
     let config = ExampleBrandApiConfig {
-        api_url: "https://dev-api.tradelocker.com".to_string(),
+        api_url: "https://api-dev.tradelocker.com".to_string(),
         api_key,
     };
     let brand_api = BrandApiClient::new(config);
@@ -22,9 +22,9 @@ async fn main() {
     //load_test(&brand_api).await;
     //is_api_alive(&brand_api).await;
     //create_user(&brand_api).await;
-    create_account(&brand_api).await;
-    //activate_account(&brand_api).await;
-    credit_account(&brand_api).await;
+    //create_account(&brand_api).await;
+    activate_account(&brand_api).await;
+    //credit_account(&brand_api).await;
     //close_account_positions(&brand_api).await;
     //get_account(&brand_api).await;
     //get_opened_positions(&brand_api).await;
@@ -42,12 +42,15 @@ async fn main() {
 }
 
 pub fn get_user_id() -> String {
-    "e1ae0e5a-863e-41f2-889f-a2194f3561b5".to_string() // prod
-    //"63f3c61e-e11a-495c-82a4-003b244e8434".to_string() // dev
+    //"e1ae0e5a-863e-41f2-889f-a2194f3561b5".to_string() // prod
+    "63f3c61e-e11a-495c-82a4-003b244e8434".to_string() // dev
 }
 
 pub fn get_account_id() -> String {
-    "L#705322".to_string()
+    //"L#705322".to_string()
+    //"L#705611".to_string()
+    //"L#705618".to_string()
+    "L#705519".to_string()
 }
 
 pub fn get_password() -> String {
