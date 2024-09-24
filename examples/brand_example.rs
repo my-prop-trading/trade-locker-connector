@@ -14,17 +14,17 @@ use trade_locker_connector::brand::{
 async fn main() {
     let api_key = std::env::var("TRADE_LOCKER_API_KEY").unwrap();
     let config = ExampleBrandApiConfig {
-        api_url: "https://api-dev.tradelocker.com".to_string(),
+        api_url: "https://dev-api.tradelocker.com".to_string(),
         api_key,
     };
     let brand_api = BrandApiClient::new(config);
     let instant = Instant::now();
-    load_test(&brand_api).await;
+    //load_test(&brand_api).await;
     //is_api_alive(&brand_api).await;
     //create_user(&brand_api).await;
-    //create_account(&brand_api).await;
+    create_account(&brand_api).await;
     //activate_account(&brand_api).await;
-    //credit_account(&brand_api).await;
+    credit_account(&brand_api).await;
     //close_account_positions(&brand_api).await;
     //get_account(&brand_api).await;
     //get_opened_positions(&brand_api).await;
@@ -42,7 +42,8 @@ async fn main() {
 }
 
 pub fn get_user_id() -> String {
-    "63f3c61e-e11a-495c-82a4-003b244e8434".to_string()
+    "e1ae0e5a-863e-41f2-889f-a2194f3561b5".to_string() // prod
+    //"63f3c61e-e11a-495c-82a4-003b244e8434".to_string() // dev
 }
 
 pub fn get_account_id() -> String {
@@ -58,7 +59,12 @@ pub fn get_email() -> String {
 }
 
 pub fn get_group_id() -> Option<String> {
-    Some("709605".to_string())
+    Some("829256".to_string()) // prod PRO365-50K-1STEP
+    //Some("709605".to_string()) // dev
+}
+
+pub fn get_account_type() -> AccountType {
+    AccountType::Live
 }
 
 pub async fn create_user(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
@@ -78,8 +84,8 @@ pub async fn create_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>)
     let resp = rest_client
         .create_account(&CreateAccountRequest {
             user_id: get_user_id(),
-            account_name: "test123".to_string(),
-            account_type: AccountType::Live,
+            account_name: "TEST".to_string(),
+            account_type: get_account_type(),
             currency: "USD".to_string(),
             group_id: get_group_id(),
         })
@@ -134,7 +140,7 @@ pub async fn get_closed_positions(rest_client: &BrandApiClient<ExampleBrandApiCo
     let resp = rest_client
         .get_closed_trades_report(&GetClosedTradesReportRequest {
             account_id: get_account_id(),
-            account_type: AccountType::Live,
+            account_type: get_account_type(),
             cursor: None,
             limit: None,
         })
@@ -147,7 +153,7 @@ pub async fn get_opened_positions(rest_client: &BrandApiClient<ExampleBrandApiCo
     let resp = rest_client
         .get_opened_positions(&GetOpenedPositionsRequest {
             account_id: get_account_id(),
-            account_type: AccountType::Live,
+            account_type: get_account_type(),
         })
         .await;
 
@@ -165,7 +171,7 @@ pub async fn check_email(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
 pub async fn get_groups(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_groups(&GetGroupsRequest {
-            account_type: AccountType::Live,
+            account_type: get_account_type(),
         })
         .await;
 
@@ -175,7 +181,7 @@ pub async fn get_groups(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
 pub async fn get_instruments(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_instruments(&GetInstrumentsRequest {
-            account_type: AccountType::Live,
+            account_type: get_account_type(),
         })
         .await;
 
@@ -205,7 +211,7 @@ pub async fn suspend_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>
 pub async fn get_accounts_report(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_accounts_report(&GetAccountsReportRequest {
-            account_type: AccountType::Live,
+            account_type: get_account_type(),
             account_ids: None,
             account_status: None,
         })
@@ -259,7 +265,7 @@ pub async fn load_test(
         }
     });
 
-    _ = join_all(futures).await;
+    join_all(futures).await;
 }
 
 pub async fn load_test_generic<F, Fut>(custom_fn: F)
@@ -286,7 +292,7 @@ where
         }
     });
 
-    _ = join_all(futures).await;
+    join_all(futures).await;
 }
 
 pub struct ExampleBrandApiConfig {
