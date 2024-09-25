@@ -236,8 +236,9 @@ pub struct GetInstrumentsResponse {
 pub struct GetOpenedPositionsRequest {
     #[serde(rename = "type")]
     pub account_type: AccountType,
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(rename = "accountId")]
-    pub account_id: String,
+    pub account_id: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

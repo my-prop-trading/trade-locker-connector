@@ -3,12 +3,7 @@ use std::sync::Arc;
 use tokio::sync::Semaphore;
 use tokio::time::Instant;
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
-use trade_locker_connector::brand::{
-    AccountType, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest,
-    CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetAccountsReportRequest,
-    GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest,
-    GetOpenedPositionsRequest, SetUserPasswordRequest, UpdateAccountStatusRequest,
-};
+use trade_locker_connector::brand::{AccountStatus, AccountType, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetAccountsReportRequest, GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, SetUserPasswordRequest, UpdateAccountStatusRequest};
 
 #[tokio::main]
 async fn main() {
@@ -23,11 +18,11 @@ async fn main() {
     //is_api_alive(&brand_api).await;
     //create_user(&brand_api).await;
     //create_account(&brand_api).await;
-    activate_account(&brand_api).await;
+    //activate_account(&brand_api).await;
     //credit_account(&brand_api).await;
     //close_account_positions(&brand_api).await;
     //get_account(&brand_api).await;
-    //get_opened_positions(&brand_api).await;
+    get_opened_positions(&brand_api).await;
     //get_closed_positions(&brand_api).await;
     //check_email(&brand_api).await;
     //get_groups(&brand_api).await;
@@ -42,8 +37,8 @@ async fn main() {
 }
 
 pub fn get_user_id() -> String {
-    //"e1ae0e5a-863e-41f2-889f-a2194f3561b5".to_string() // prod
-    "63f3c61e-e11a-495c-82a4-003b244e8434".to_string() // dev
+    "e1ae0e5a-863e-41f2-889f-a2194f3561b5".to_string() // prod
+    //"63f3c61e-e11a-495c-82a4-003b244e8434".to_string() // dev
 }
 
 pub fn get_account_id() -> String {
@@ -155,7 +150,7 @@ pub async fn get_closed_positions(rest_client: &BrandApiClient<ExampleBrandApiCo
 pub async fn get_opened_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_opened_positions(&GetOpenedPositionsRequest {
-            account_id: get_account_id(),
+            account_id: None,
             account_type: get_account_type(),
         })
         .await;
@@ -215,8 +210,8 @@ pub async fn get_accounts_report(rest_client: &BrandApiClient<ExampleBrandApiCon
     let resp = rest_client
         .get_accounts_report(&GetAccountsReportRequest {
             account_type: get_account_type(),
-            account_ids: None,
-            account_status: None,
+            account_ids: Some(vec!["L#705519".to_string()]),
+            account_status: Some(AccountStatus::Active)
         })
         .await;
 
