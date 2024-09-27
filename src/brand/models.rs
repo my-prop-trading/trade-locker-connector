@@ -594,7 +594,7 @@ pub struct TradeReportModel {
     pub side: TradeReportSide,
 
     #[serde(rename = "orderType")]
-    pub order_type: OrderType,
+    pub order_type: String,
 
     #[serde(rename = "positionStatus")]
     pub position_status: TradeReportPositionStatus,
@@ -635,17 +635,23 @@ pub struct TradeReportModel {
 }
 
 // Enums for trade sides, order types, and position status
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[derive(strum::Display, Serialize, Deserialize, Debug, Clone)]
 pub enum TradeReportSide {
+    #[strum(to_string = "BUY")]
+    #[serde(rename = "BUY")]
     Buy,
+    #[strum(to_string = "SELL")]
+    #[serde(rename = "SELL")]
     Sell,
+    #[strum(to_string = "SHORT_SELL")]
+    #[serde(rename = "SHORT_SELL")]
     ShortSell,
+    #[strum(to_string = "BUY_TO_COVER")]
+    #[serde(rename = "BUY_TO_COVER")]
     BuyToCover,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[derive(strum::Display, Serialize, Deserialize, Debug, Clone)]
 pub enum TradeReportOrderType {
     Market,
     ProtectiveStop,
@@ -660,11 +666,18 @@ pub enum TradeReportOrderType {
     TrailingStop,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[derive(strum::Display, Serialize, Deserialize, Debug, Clone)]
 pub enum TradeReportPositionStatus {
+    #[strum(to_string = "CLOSE")]
+    #[serde(rename = "CLOSE")]
     Close,
+    #[strum(to_string = "OPEN")]
+    #[serde(rename = "OPEN")]
     Open,
+    #[strum(to_string = "INCREASE")]
+    #[serde(rename = "INCREASE")]
     Increase,
+    #[strum(to_string = "DECREASE")]
+    #[serde(rename = "DECREASE")]
     Decrease,
 }
