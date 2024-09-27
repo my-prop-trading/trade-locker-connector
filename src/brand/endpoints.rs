@@ -87,7 +87,7 @@ impl From<&BrandApiEndpoint> for String {
                 format!("/{api_name}/alive")
             }
             BrandApiEndpoint::GetTradesReport => {
-                format!("/{api_name}/{api_version}/trades-history-report")
+                format!("/{api_name}/{api_version}/reports/trades-history-report")
             }
         }
     }
