@@ -7,8 +7,9 @@ use crate::brand::{
     CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse,
     GetApiStatusResponse, GetClosedTradesReportRequest, GetClosedTradesReportResponse,
     GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest, GetInstrumentsResponse,
-    GetOpenedPositionsRequest, GetOpenedPositionsResponse, SetAccountGroupRequest,
-    SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse,
+    GetOpenedPositionsRequest, GetOpenedPositionsResponse, GetTradesReportRequest,
+    GetTradesReportResponse, SetAccountGroupRequest, SetUserPasswordRequest,
+    UpdateAccountStatusRequest, UpdateAccountStatusResponse,
 };
 use error_chain::bail;
 use http::{Method, StatusCode};
@@ -174,6 +175,14 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         let resp = self.send(endpoint, request).await?;
 
         Ok(resp == "1")
+    }
+
+    pub async fn get_trades_report(
+        &self,
+        request: &GetTradesReportRequest,
+    ) -> Result<GetTradesReportResponse, Error> {
+        let endpoint = BrandApiEndpoint::GetTradesReport;
+        self.send_deserialized(endpoint, Some(request)).await
     }
 
     async fn send<R: Serialize>(

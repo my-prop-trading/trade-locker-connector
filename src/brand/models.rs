@@ -558,3 +558,113 @@ pub struct AccountReportModel {
 pub struct GetApiStatusResponse {
     pub status: String,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetTradesReportRequest {
+    #[serde(rename = "type")]
+    pub account_type: AccountType,
+    #[serde(rename = "accountId")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub account_id: Option<String>,
+    /// Start time in ISO format. 2021-12-31T23:59:59.999Z
+    #[serde(rename = "startDateTime")]
+    pub start_date_time: String,
+    /// End time in ISO format. 2021-12-31T23:59:59.999Z
+    #[serde(rename = "endDateTime")]
+    pub end_date_time: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetTradesReportResponse {
+    pub data: Vec<TradeReportModel>,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct TradeReportModel {
+    #[serde(rename = "tradeId")]
+    pub trade_id: String,
+
+    #[serde(rename = "orderId")]
+    pub order_id: String,
+
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+
+    #[serde(rename = "side")]
+    pub side: TradeReportSide,
+
+    #[serde(rename = "orderType")]
+    pub order_type: OrderType,
+
+    #[serde(rename = "positionStatus")]
+    pub position_status: TradeReportPositionStatus,
+
+    #[serde(rename = "tradeTime")]
+    #[deprecated(note = "Use tradeDateTime instead.")]
+    pub trade_time: i64, // trade time in milliseconds since Unix epoch
+
+    #[serde(rename = "tradeDateTime")]
+    pub trade_date_time: String, // ISO format
+
+    #[serde(rename = "price")]
+    pub price: String,
+
+    #[serde(rename = "lots")]
+    pub lots: String,
+
+    #[serde(rename = "instrument")]
+    pub instrument: String,
+
+    #[serde(rename = "positionId")]
+    pub position_id: String,
+
+    #[serde(rename = "pnl")]
+    pub pnl: String,
+
+    #[serde(rename = "executionFee")]
+    pub execution_fee: String,
+
+    #[serde(rename = "stopLoss")]
+    pub stop_loss: Option<String>,
+
+    #[serde(rename = "stopLossLimit")]
+    pub stop_loss_limit: Option<String>,
+
+    #[serde(rename = "takeProfit")]
+    pub take_profit: Option<String>,
+}
+
+// Enums for trade sides, order types, and position status
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum TradeReportSide {
+    Buy,
+    Sell,
+    ShortSell,
+    BuyToCover,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum TradeReportOrderType {
+    Market,
+    ProtectiveStop,
+    StopLoss,
+    Stop,
+    StopOut,
+    ProtectiveLimit,
+    TakeProfit,
+    Limit,
+    StopLimit,
+    TrailingStopLoss,
+    TrailingStop,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum TradeReportPositionStatus {
+    Close,
+    Open,
+    Increase,
+    Decrease,
+}
