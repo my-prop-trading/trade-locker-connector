@@ -1,9 +1,11 @@
+use chrono::{DateTime, TimeDelta, Utc};
 use futures_util::future::join_all;
+use std::ops::Sub;
 use std::sync::Arc;
 use tokio::sync::Semaphore;
 use tokio::time::Instant;
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
-use trade_locker_connector::brand::{AccountStatus, AccountType, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetAccountsReportRequest, GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, SetUserPasswordRequest, UpdateAccountStatusRequest};
+use trade_locker_connector::brand::{AccountStatus, AccountType, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetAccountsReportRequest, GetAssetsRequest, GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, GetTradesReportRequest, SetUserPasswordRequest, UpdateAccountStatusRequest};
 
 #[tokio::main]
 async fn main() {
@@ -16,13 +18,15 @@ async fn main() {
     let instant = Instant::now();
     //load_test(&brand_api).await;
     //is_api_alive(&brand_api).await;
+    //get_api_status(&brand_api).await;
+
     //create_user(&brand_api).await;
     //create_account(&brand_api).await;
     //activate_account(&brand_api).await;
     //credit_account(&brand_api).await;
     //close_account_positions(&brand_api).await;
     //get_account(&brand_api).await;
-    get_opened_positions(&brand_api).await;
+    //get_opened_positions(&brand_api).await;
     //get_closed_positions(&brand_api).await;
     //check_email(&brand_api).await;
     //get_groups(&brand_api).await;
@@ -30,15 +34,17 @@ async fn main() {
     //restrict_account(&brand_api).await;
     //suspend_account(&brand_api).await;
     //get_accounts_report(&brand_api).await;
-    //get_api_status(&brand_api).await;
     //set_user_password(&brand_api).await
+    //get_trades_report(&brand_api).await;
+    
+    get_assets(&brand_api).await;
 
     println!("elapsed time: {:?}", instant.elapsed());
 }
 
 pub fn get_user_id() -> String {
     "e1ae0e5a-863e-41f2-889f-a2194f3561b5".to_string() // prod
-    //"63f3c61e-e11a-495c-82a4-003b244e8434".to_string() // dev
+                                                       //"63f3c61e-e11a-495c-82a4-003b244e8434".to_string() // dev
 }
 
 pub fn get_account_id() -> String {
@@ -58,7 +64,7 @@ pub fn get_email() -> String {
 
 pub fn get_group_id() -> Option<String> {
     Some("829256".to_string()) // prod PRO365-50K-1STEP
-    //Some("709605".to_string()) // dev
+                               //Some("709605".to_string()) // dev
 }
 
 pub fn get_account_type() -> AccountType {
@@ -211,7 +217,7 @@ pub async fn get_accounts_report(rest_client: &BrandApiClient<ExampleBrandApiCon
         .get_accounts_report(&GetAccountsReportRequest {
             account_type: get_account_type(),
             account_ids: Some(vec!["L#705519".to_string()]),
-            account_status: Some(AccountStatus::Active)
+            account_status: Some(AccountStatus::Active),
         })
         .await;
 
@@ -241,9 +247,34 @@ pub async fn is_api_alive(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     println!("{:?}", resp)
 }
 
-pub async fn load_test(
-    rest_client: &BrandApiClient<ExampleBrandApiConfig>,
-) {
+pub async fn get_assets(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client.get_assets(&GetAssetsRequest {
+        account_type: get_account_type(),
+    }).await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn get_trades_report(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let now = Utc::now();
+    let request = GetTradesReportRequest {
+        account_type: AccountType::Live,
+        account_id: None,
+        start_date_time: date_to_string(now.sub(TimeDelta::hours(1))),
+        end_date_time: date_to_string(now),
+    };
+    println!("sending {:?}", request);
+    let resp = rest_client.get_trades_report(&request).await;
+
+    println!("{:?}", resp)
+}
+pub fn date_to_string(date: DateTime<Utc>) -> String {
+    format!("{}", date.format(FORMAT))
+}
+
+const FORMAT: &str = "%Y-%m-%dT%H:%M:%S%.3fZ"; // yyyy-MM-ddTHH:mm:ss.SSSZ e.g., 2021-12-31T23:59:59.999Z
+
+pub async fn load_test(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let max_parallel_requests: usize = 1000;
     let num_requests: usize = 50000;
     let semaphore = Arc::new(Semaphore::new(max_parallel_requests));
@@ -256,7 +287,7 @@ pub async fn load_test(
                 .acquire()
                 .await
                 .expect("Semaphore wasn't been closed");
-            
+
             println!("send request #{i}");
 
             get_opened_positions(rest_client).await

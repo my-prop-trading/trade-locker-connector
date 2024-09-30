@@ -681,3 +681,20 @@ pub enum TradeReportPositionStatus {
     #[serde(rename = "DECREASE")]
     Decrease,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetAssetsRequest {
+    #[serde(rename = "type")]
+    pub account_type: AccountType,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AssetModel {
+    pub name: String,
+    pub id: i32,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetAssetsResponse {
+    pub data: Vec<AssetModel>,
+}
