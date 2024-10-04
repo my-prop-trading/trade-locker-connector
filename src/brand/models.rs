@@ -571,7 +571,10 @@ pub struct GetTradesReportRequest {
     pub start_date_time: String,
     /// End time in ISO format. 2021-12-31T23:59:59.999Z
     #[serde(rename = "endDateTime")]
-    pub end_date_time: String,
+    pub end_date_time: String,    
+    #[serde(rename = "enableSLTP")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub enable_sl_tp: Option<bool>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

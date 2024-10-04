@@ -16,7 +16,7 @@ async fn main() {
     };
     let brand_api = BrandApiClient::new(config);
     let instant = Instant::now();
-    //load_test(&brand_api).await;
+    load_test(&brand_api).await;
     //is_api_alive(&brand_api).await;
     //get_api_status(&brand_api).await;
 
@@ -154,6 +154,7 @@ pub async fn get_closed_positions(rest_client: &BrandApiClient<ExampleBrandApiCo
 }
 
 pub async fn get_opened_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+
     let resp = rest_client
         .get_opened_positions(&GetOpenedPositionsRequest {
             account_id: None,
@@ -260,13 +261,18 @@ pub async fn get_trades_report(rest_client: &BrandApiClient<ExampleBrandApiConfi
     let request = GetTradesReportRequest {
         account_type: AccountType::Live,
         account_id: None,
-        start_date_time: date_to_string(now.sub(TimeDelta::hours(1))),
+        start_date_time: date_to_string(now.sub(TimeDelta::minutes(1))),
         end_date_time: date_to_string(now),
+        enable_sl_tp: Some(false),
     };
-    println!("sending {:?}", request);
+    println!("==========");
+    println!("{:?} sending {:?}", Utc::now(), request);
+    
     let resp = rest_client.get_trades_report(&request).await;
 
-    println!("{:?}", resp)
+    println!("{:?} got response {:?}", Utc::now(), resp,);
+    println!("==========");
+
 }
 pub fn date_to_string(date: DateTime<Utc>) -> String {
     format!("{}", date.format(FORMAT))
@@ -275,8 +281,9 @@ pub fn date_to_string(date: DateTime<Utc>) -> String {
 const FORMAT: &str = "%Y-%m-%dT%H:%M:%S%.3fZ"; // yyyy-MM-ddTHH:mm:ss.SSSZ e.g., 2021-12-31T23:59:59.999Z
 
 pub async fn load_test(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
-    let max_parallel_requests: usize = 1000;
-    let num_requests: usize = 50000;
+    let max_parallel_requests: usize = 1;
+    let num_requests: usize = 10000;
+    let delay = core::time::Duration::from_secs(1);
     let semaphore = Arc::new(Semaphore::new(max_parallel_requests));
 
     let futures = (0..num_requests).map(|i| {
@@ -288,9 +295,8 @@ pub async fn load_test(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
                 .await
                 .expect("Semaphore wasn't been closed");
 
-            println!("send request #{i}");
-
-            get_opened_positions(rest_client).await
+            tokio::time::sleep(delay).await;
+            get_trades_report(rest_client).await
         }
     });
 
