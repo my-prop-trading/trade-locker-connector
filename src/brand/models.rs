@@ -318,7 +318,7 @@ pub struct ClosedTradeReportModel {
     //#[serde(rename = "openDateTime")]
     //pub open_date_time: DateTime<Utc>,
     #[serde(rename = "orderType")]
-    pub order_type: OrderType,
+    pub order_type: String,
 
     #[serde(rename = "positionSide")]
     pub position_side: ClosedPositionSide,
@@ -422,12 +422,12 @@ pub enum OrderType {
     #[serde(rename = "Market")]
     Market,
 
-    #[strum(to_string = "Protective Stop")]
-    #[serde(rename = "Protective Stop")]
+    #[strum(to_string = "Protective stop")]
+    #[serde(rename = "Protective stop")]
     ProtectiveStop,
 
-    #[strum(to_string = "Stop Loss")]
-    #[serde(rename = "Stop Loss")]
+    #[strum(to_string = "Stop loss")]
+    #[serde(rename = "Stop loss")]
     StopLoss,
 
     #[strum(to_string = "Stop")]
@@ -438,12 +438,12 @@ pub enum OrderType {
     #[serde(rename = "Stop Out")]
     StopOut,
 
-    #[strum(to_string = "Protective Limit")]
-    #[serde(rename = "Protective Limit")]
+    #[strum(to_string = "Protective limit")]
+    #[serde(rename = "Protective limit")]
     ProtectiveLimit,
 
-    #[strum(to_string = "Take Profit")]
-    #[serde(rename = "Take Profit")]
+    #[strum(to_string = "Take profit")]
+    #[serde(rename = "Take profit")]
     TakeProfit,
 
     #[strum(to_string = "Limit")]
