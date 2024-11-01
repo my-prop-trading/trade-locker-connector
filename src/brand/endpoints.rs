@@ -96,10 +96,10 @@ impl From<&BrandApiEndpoint> for String {
                 format!("/{api_name}/{api_version}/brand/assets")
             }
             BrandApiEndpoint::GetOrders => {
-                format!("/{api_name}/{api_version}/v1/orders/all")
+                format!("/{api_name}/{api_version}/orders/all")
             }
             BrandApiEndpoint::CancelOrder => {
-                format!("/{api_name}/{api_version}/v1/orders/cancel")
+                format!("/{api_name}/{api_version}/orders/cancel")
             }
         }
     }
