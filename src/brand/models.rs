@@ -738,36 +738,38 @@ pub struct OrderModel {
     #[serde(rename = "lotSize")]
     pub lot_size: String,
     #[serde(rename = "averageFilledPrice")]
-    pub average_filled_price: String,
+    pub average_filled_price: Option<String>,
     #[serde(rename = "createdDateTime")]
     pub created_date_time: String,
     #[serde(rename = "expireDateTime")]
-    pub expire_date_time: String,
+    pub expire_date_time: Option<String>,
+    #[serde(rename = "expireTime")]
+    pub expire_time: Option<String>,
     #[serde(rename = "filledAmount")]
     pub filled_amount: String,
     #[serde(rename = "orderId")]
     pub order_id: String,
     #[serde(rename = "positionId")]
-    pub position_id: String,
+    pub position_id: Option<String>,
     #[serde(rename = "price")]
     pub price: String,
     #[serde(rename = "side")]
     pub side: String,
     #[serde(rename = "slLimitPrice")]
-    pub sl_limit_price: String,
+    pub sl_limit_price: Option<String>,
     #[serde(rename = "slPrice")]
-    pub sl_price: String,
+    pub sl_price: Option<String>,
     #[serde(rename = "slPriceType")]
     pub sl_price_type: String,
     #[serde(rename = "status")]
     pub status: String,
     #[serde(rename = "stopPrice")]
-    pub stop_price: String,
+    pub stop_price: Option<String>,
     /// Time-in-force of the order.
     #[serde(rename = "tif")]
     pub tif: String,
     #[serde(rename = "tpPrice")]
-    pub tp_price: String,
+    pub tp_price: Option<String>,
     #[serde(rename = "tpPriceType")]
     pub tp_price_type: String,
     #[serde(rename = "instrument")]

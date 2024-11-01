@@ -16,7 +16,7 @@ async fn main() {
     };
     let brand_api = BrandApiClient::new(config);
     let instant = Instant::now();
-    load_test(&brand_api).await;
+    //load_test(&brand_api).await;
     //is_api_alive(&brand_api).await;
     //get_api_status(&brand_api).await;
 
@@ -37,7 +37,7 @@ async fn main() {
     //set_user_password(&brand_api).await
     //get_trades_report(&brand_api).await;
     //get_assets(&brand_api).await;
-    //get_orders(&brand_api).await;
+    get_orders(&brand_api).await;
     //cancel_order(&brand_api).await;    
 
     println!("elapsed time: {:?}", instant.elapsed());
@@ -350,7 +350,7 @@ impl BrandApiConfig for ExampleBrandApiConfig {
 pub async fn get_orders(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client.get_orders(&GetOrdersRequest {
         account_type: get_account_type(),
-        account_id: Some(get_account_id()),
+        account_id: None,
         offset: None,
         limit: None,
     }).await;
