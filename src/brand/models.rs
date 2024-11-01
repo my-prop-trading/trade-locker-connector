@@ -709,3 +709,69 @@ pub struct CancelOrderRequest {
     #[serde(rename = "orderId")]
     pub order_id: String,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetOrdersRequest {
+    #[serde(rename = "type")]
+    pub account_type: AccountType,
+    #[serde(rename = "accountId")]
+    pub account_id: Option<String>,
+    /// Default is 0
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub offset: Option<String>,
+    /// Default is 1000
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub limit: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetOrdersResponse {
+    pub data: Vec<OrderModel>
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct OrderModel {
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+    #[serde(rename = "amount")]
+    pub amount: String,
+    #[serde(rename = "lotSize")]
+    pub lot_size: String,
+    #[serde(rename = "averageFilledPrice")]
+    pub average_filled_price: String,
+    #[serde(rename = "createdDateTime")]
+    pub created_date_time: String,
+    #[serde(rename = "expireDateTime")]
+    pub expire_date_time: String,
+    #[serde(rename = "filledAmount")]
+    pub filled_amount: String,
+    #[serde(rename = "orderId")]
+    pub order_id: String,
+    #[serde(rename = "positionId")]
+    pub position_id: String,
+    #[serde(rename = "price")]
+    pub price: String,
+    #[serde(rename = "side")]
+    pub side: String,
+    #[serde(rename = "slLimitPrice")]
+    pub sl_limit_price: String,
+    #[serde(rename = "slPrice")]
+    pub sl_price: String,
+    #[serde(rename = "slPriceType")]
+    pub sl_price_type: String,
+    #[serde(rename = "status")]
+    pub status: String,
+    #[serde(rename = "stopPrice")]
+    pub stop_price: String,
+    /// Time-in-force of the order.
+    #[serde(rename = "tif")]
+    pub tif: String,
+    #[serde(rename = "tpPrice")]
+    pub tp_price: String,
+    #[serde(rename = "tpPriceType")]
+    pub tp_price_type: String,
+    #[serde(rename = "instrument")]
+    pub instrument: String,
+    #[serde(rename = "type")]
+    pub order_type: String,
+}
