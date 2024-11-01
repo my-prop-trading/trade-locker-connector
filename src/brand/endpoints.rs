@@ -22,6 +22,8 @@ pub enum BrandApiEndpoint {
     IsApiAlive,
     GetTradesReport,
     GetAssets,
+    GetOrders,
+    CancelOrder,
 }
 
 impl From<&BrandApiEndpoint> for String {
@@ -91,7 +93,13 @@ impl From<&BrandApiEndpoint> for String {
                 format!("/{api_name}/{api_version}/reports/trades-history-report")
             }
             BrandApiEndpoint::GetAssets => {
-                format!("/{api_name}/{}/brand/assets", api_version)
+                format!("/{api_name}/{api_version}/brand/assets")
+            }
+            BrandApiEndpoint::GetOrders => {
+                format!("/{api_name}/{api_version}/v1/orders/all")
+            }
+            BrandApiEndpoint::CancelOrder => {
+                format!("/{api_name}/{api_version}/v1/orders/cancel")
             }
         }
     }
@@ -120,6 +128,8 @@ impl BrandApiEndpoint {
             BrandApiEndpoint::IsApiAlive => Method::GET,
             BrandApiEndpoint::GetTradesReport => Method::POST,
             BrandApiEndpoint::GetAssets => Method::POST,
+            BrandApiEndpoint::GetOrders => Method::POST,
+            BrandApiEndpoint::CancelOrder => Method::POST,
         }
     }
 }
