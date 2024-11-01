@@ -417,7 +417,7 @@ pub enum SlOrderType {
 }
 
 #[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
-pub enum OrderType {
+pub enum PositionOrderType {
     #[strum(to_string = "Market")]
     #[serde(rename = "Market")]
     Market,
@@ -762,7 +762,7 @@ pub struct OrderModel {
     #[serde(rename = "slPriceType")]
     pub sl_price_type: String,
     #[serde(rename = "status")]
-    pub status: String,
+    pub status: OrderStatus,
     #[serde(rename = "stopPrice")]
     pub stop_price: Option<String>,
     /// Time-in-force of the order.
@@ -775,5 +775,115 @@ pub struct OrderModel {
     #[serde(rename = "instrument")]
     pub instrument: String,
     #[serde(rename = "type")]
-    pub order_type: String,
+    pub order_type: OrderType,
+}
+
+#[derive(strum::Display, Serialize, Deserialize, Debug, Clone)]
+pub enum OrderStatus {
+    #[strum(to_string = "STATUS_NONE")]
+    #[serde(rename = "STATUS_NONE")]
+    None,
+
+    #[strum(to_string = "STATUS_PENDING_NEW")]
+    #[serde(rename = "STATUS_PENDING_NEW")]
+    PendingNew,
+
+    #[strum(to_string = "STATUS_PENDING_EXECUTION")]
+    #[serde(rename = "STATUS_PENDING_EXECUTION")]
+    PendingExecution,
+
+    #[strum(to_string = "STATUS_PENDING_CANCEL")]
+    #[serde(rename = "STATUS_PENDING_CANCEL")]
+    PendingCancel,
+
+    #[strum(to_string = "STATUS_PENDING_REPLACE")]
+    #[serde(rename = "STATUS_PENDING_REPLACE")]
+    PendingReplace,
+
+    #[strum(to_string = "STATUS_PENDING_REPLACE_NOT_ACTIVE")]
+    #[serde(rename = "STATUS_PENDING_REPLACE_NOT_ACTIVE")]
+    PendingReplaceNotActive,
+
+    #[strum(to_string = "STATUS_NEW")]
+    #[serde(rename = "STATUS_NEW")]
+    New,
+
+    #[strum(to_string = "STATUS_ACCEPTED")]
+    #[serde(rename = "STATUS_ACCEPTED")]
+    Accepted,
+
+    #[strum(to_string = "STATUS_REPLACED")]
+    #[serde(rename = "STATUS_REPLACED")]
+    Replaced,
+
+    #[strum(to_string = "STATUS_PART_FILLED")]
+    #[serde(rename = "STATUS_PART_FILLED")]
+    PartFilled,
+
+    #[strum(to_string = "STATUS_FILLED")]
+    #[serde(rename = "STATUS_FILLED")]
+    Filled,
+
+    #[strum(to_string = "STATUS_CANCELED")]
+    #[serde(rename = "STATUS_CANCELED")]
+    Canceled,
+
+    #[strum(to_string = "STATUS_REFUSED")]
+    #[serde(rename = "STATUS_REFUSED")]
+    Refused,
+
+    #[strum(to_string = "STATUS_RESTATED")]
+    #[serde(rename = "STATUS_RESTATED")]
+    Restated,
+
+    #[strum(to_string = "EXEC_TYPE_ACTIVATED")]
+    #[serde(rename = "EXEC_TYPE_ACTIVATED")]
+    Activated,
+
+    #[strum(to_string = "STATUS_WAITING_MARKET")]
+    #[serde(rename = "STATUS_WAITING_MARKET")]
+    WaitingMarket,
+
+    #[strum(to_string = "STATUS_OFF_MARKET")]
+    #[serde(rename = "STATUS_OFF_MARKET")]
+    OffMarket,
+
+    #[strum(to_string = "STATUS_UNPLACED")]
+    #[serde(rename = "STATUS_UNPLACED")]
+    Unplaced,
+
+    #[strum(to_string = "STATUS_REMOVED")]
+    #[serde(rename = "STATUS_REMOVED")]
+    Removed,
+
+    #[strum(to_string = "STATUS_MODIFY_TRADING_MODE")]
+    #[serde(rename = "STATUS_MODIFY_TRADING_MODE")]
+    ModifyTradingMode,
+}
+
+#[derive(strum::Display, Serialize, Deserialize, Debug, Clone)]
+pub enum OrderType {
+    #[strum(to_string = "MANUAL")]
+    #[serde(rename = "MANUAL")]
+    Manual,
+
+    #[strum(to_string = "MARKET")]
+    #[serde(rename = "MARKET")]
+    Market,
+
+    #[strum(to_string = "STOP")]
+    #[serde(rename = "STOP")]
+    Stop,
+
+    #[strum(to_string = "LIMIT")]
+    #[serde(rename = "LIMIT")]
+    Limit,
+
+    #[strum(to_string = "STOP_LIMIT")]
+    #[serde(rename = "STOP_LIMIT")]
+    StopLimit,
+
+    #[strum(to_string = "TRAILING_STOP")]
+    #[serde(rename = "TRAILING_STOP")]
+    TrailingStop,
 }

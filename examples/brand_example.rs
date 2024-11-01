@@ -37,8 +37,8 @@ async fn main() {
     //set_user_password(&brand_api).await
     //get_trades_report(&brand_api).await;
     //get_assets(&brand_api).await;
+    cancel_order(&brand_api).await;
     get_orders(&brand_api).await;
-    //cancel_order(&brand_api).await;    
 
     println!("elapsed time: {:?}", instant.elapsed());
 }
@@ -350,7 +350,7 @@ impl BrandApiConfig for ExampleBrandApiConfig {
 pub async fn get_orders(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client.get_orders(&GetOrdersRequest {
         account_type: get_account_type(),
-        account_id: None,
+        account_id: Some("L#708261".to_string()),
         offset: None,
         limit: None,
     }).await;
@@ -361,7 +361,7 @@ pub async fn get_orders(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
 pub async fn cancel_order(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client.cancel_order(&CancelOrderRequest {
         account_type: get_account_type(),
-        order_id: "".to_string(),
+        order_id: "72057594042846841".to_string(),
     }).await;
 
     println!("{:?}", resp)
