@@ -571,7 +571,7 @@ pub struct GetTradesReportRequest {
     pub start_date_time: String,
     /// End time in ISO format. 2021-12-31T23:59:59.999Z
     #[serde(rename = "endDateTime")]
-    pub end_date_time: String,    
+    pub end_date_time: String,
     #[serde(rename = "enableSLTP")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub enable_sl_tp: Option<bool>,
@@ -700,4 +700,12 @@ pub struct AssetModel {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GetAssetsResponse {
     pub data: Vec<AssetModel>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CancelOrderRequest {
+    #[serde(rename = "type")]
+    pub account_type: AccountType,
+    #[serde(rename = "orderId")]
+    pub order_id: String,
 }

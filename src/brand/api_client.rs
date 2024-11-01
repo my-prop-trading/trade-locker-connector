@@ -1,7 +1,7 @@
 use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
-use crate::brand::{AccountModel, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest, CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest, CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse, GetApiStatusResponse, GetAssetsRequest, GetAssetsResponse, GetClosedTradesReportRequest, GetClosedTradesReportResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest, GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse, GetTradesReportRequest, GetTradesReportResponse, SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse};
+use crate::brand::{AccountModel, CancelOrderRequest, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest, CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest, CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse, GetApiStatusResponse, GetAssetsRequest, GetAssetsResponse, GetClosedTradesReportRequest, GetClosedTradesReportResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest, GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse, GetTradesReportRequest, GetTradesReportResponse, SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse};
 use error_chain::bail;
 use http::{Method, StatusCode};
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -182,6 +182,16 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
     ) -> Result<GetTradesReportResponse, Error> {
         let endpoint = BrandApiEndpoint::GetTradesReport;
         self.send_deserialized(endpoint, Some(request)).await
+    }
+
+    pub async fn cancel_order(
+        &self,
+        request: &CancelOrderRequest,
+    ) -> Result<(), Error> {
+        let endpoint = BrandApiEndpoint::GetTradesReport;
+        let _resp = self.send(endpoint, Some(request)).await?;
+        
+        Ok(())
     }
 
     async fn send<R: Serialize>(
