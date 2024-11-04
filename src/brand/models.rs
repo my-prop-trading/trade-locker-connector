@@ -718,10 +718,10 @@ pub struct GetOrdersRequest {
     pub account_id: Option<String>,
     /// Default is 0
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub offset: Option<String>,
+    pub offset: Option<i32>,
     /// Default is 1000
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit: Option<String>,
+    pub limit: Option<i32>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
