@@ -778,7 +778,7 @@ pub struct OrderModel {
     pub order_type: OrderType,
 }
 
-#[derive(strum::Display, Serialize, Deserialize, Debug, Clone)]
+#[derive(strum::Display, Serialize, Deserialize, Debug, Clone, Eq, PartialOrd, PartialEq)]
 pub enum OrderStatus {
     #[strum(to_string = "STATUS_NONE")]
     #[serde(rename = "STATUS_NONE")]
@@ -861,7 +861,7 @@ pub enum OrderStatus {
     ModifyTradingMode,
 }
 
-#[derive(strum::Display, Serialize, Deserialize, Debug, Clone)]
+#[derive(strum::Display, Serialize, Deserialize, Debug, Clone, Eq, PartialOrd, PartialEq)]
 pub enum OrderType {
     #[strum(to_string = "MANUAL")]
     #[serde(rename = "MANUAL")]
