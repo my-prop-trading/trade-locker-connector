@@ -887,3 +887,18 @@ pub enum OrderType {
     #[serde(rename = "TRAILING_STOP")]
     TrailingStop,
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct AccountOperationRequest {
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+    /// Amount of the operation. Must be positive.
+    pub amount: String,
+    pub note: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct AccountOperationResponse {
+    #[serde(rename = "operationId")]
+    pub operation_id: String,
+}
