@@ -5,7 +5,7 @@ use std::sync::Arc;
 use tokio::sync::Semaphore;
 use tokio::time::Instant;
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
-use trade_locker_connector::brand::{AccountStatus, AccountType, CancelOrderRequest, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetAccountsReportRequest, GetAssetsRequest, GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, GetOrdersRequest, GetTradesReportRequest, SetUserPasswordRequest, UpdateAccountStatusRequest};
+use trade_locker_connector::brand::{AccountOperationRequest, AccountStatus, AccountType, CancelOrderRequest, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetAccountsReportRequest, GetAssetsRequest, GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, GetOrdersRequest, GetTradesReportRequest, SetUserPasswordRequest, UpdateAccountStatusRequest};
 
 #[tokio::main]
 async fn main() {
@@ -38,7 +38,9 @@ async fn main() {
     //get_trades_report(&brand_api).await;
     //get_assets(&brand_api).await;
     //cancel_order(&brand_api).await;
-    get_orders(&brand_api).await;
+    //get_orders(&brand_api).await;
+    deposit_account(&brand_api).await;
+    withdraw_account(&brand_api).await;
 
     println!("elapsed time: {:?}", instant.elapsed());
 }
@@ -52,7 +54,8 @@ pub fn get_account_id() -> String {
     //"L#705322".to_string()
     //"L#705611".to_string()
     //"L#705618".to_string()
-    "L#705519".to_string()
+    //"L#705519".to_string()
+    "L#708261".to_string()
 }
 
 pub fn get_password() -> String {
@@ -114,6 +117,30 @@ pub async fn credit_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>)
         .credit_account(&CreditAccountRequest {
             account_id: get_account_id(),
             amount: "10000".to_string(),
+            note: None,
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn deposit_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .deposit_account(&AccountOperationRequest {
+            account_id: get_account_id(),
+            amount: "10000".to_string(),
+            note: None,
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn withdraw_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .withdraw_account(&AccountOperationRequest {
+            account_id: get_account_id(),
+            amount: "1000".to_string(),
             note: None,
         })
         .await;
