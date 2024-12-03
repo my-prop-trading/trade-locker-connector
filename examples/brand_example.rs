@@ -5,7 +5,7 @@ use std::sync::Arc;
 use tokio::sync::Semaphore;
 use tokio::time::Instant;
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
-use trade_locker_connector::brand::{AccountOperationRequest, AccountStatus, AccountType, CancelOrderRequest, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetAccountsReportRequest, GetAssetsRequest, GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, GetOrdersRequest, GetTradesReportRequest, SetUserPasswordRequest, UpdateAccountStatusRequest};
+use trade_locker_connector::brand::{AccountOperationRequest, AccountStatus, AccountType, CancelOrderRequest, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetAccountsReportRequest, GetAssetsRequest, GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, GetOrdersRequest, GetTradesReportRequest, MonthlyActiveAccountsRequest, SetUserPasswordRequest, UpdateAccountStatusRequest};
 
 #[tokio::main]
 async fn main() {
@@ -39,8 +39,9 @@ async fn main() {
     //get_assets(&brand_api).await;
     //cancel_order(&brand_api).await;
     //get_orders(&brand_api).await;
-    deposit_account(&brand_api).await;
-    withdraw_account(&brand_api).await;
+    //deposit_account(&brand_api).await;
+    //withdraw_account(&brand_api).await;
+    get_monthly_active_accounts(&brand_api).await;
 
     println!("elapsed time: {:?}", instant.elapsed());
 }
@@ -142,6 +143,17 @@ pub async fn withdraw_account(rest_client: &BrandApiClient<ExampleBrandApiConfig
             account_id: get_account_id(),
             amount: "1000".to_string(),
             note: None,
+        })
+        .await;
+
+    println!("{:?}", resp)
+}
+
+pub async fn get_monthly_active_accounts(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .get_monthly_active_accounts(&MonthlyActiveAccountsRequest {
+            for_month: "2024-11".to_string(),
+            return_type: "json".to_string(),
         })
         .await;
 
