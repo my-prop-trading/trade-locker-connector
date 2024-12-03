@@ -26,6 +26,7 @@ pub enum BrandApiEndpoint {
     CancelOrder,
     Deposit,
     Withdraw,
+    MonthlyActiveAccounts,
 }
 
 impl From<&BrandApiEndpoint> for String {
@@ -109,6 +110,9 @@ impl From<&BrandApiEndpoint> for String {
             BrandApiEndpoint::Withdraw => {
                 format!("/{api_name}/{api_version}/account-operations/withdraw")
             }
+            BrandApiEndpoint::MonthlyActiveAccounts => {
+                format!("/{api_name}/{api_version}/brand/monthly-active-accounts")
+            }
         }
     }
 }
@@ -140,6 +144,7 @@ impl BrandApiEndpoint {
             BrandApiEndpoint::CancelOrder => Method::POST,
             BrandApiEndpoint::Deposit => Method::POST,
             BrandApiEndpoint::Withdraw => Method::POST,
+            BrandApiEndpoint::MonthlyActiveAccounts => Method::POST,
         }
     }
 }
