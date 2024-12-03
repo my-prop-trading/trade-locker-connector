@@ -902,3 +902,31 @@ pub struct AccountOperationResponse {
     #[serde(rename = "operationId")]
     pub operation_id: String,
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct MonthlyActiveAccountsRequest {
+    /// Activity for set month. ISO format YYYY-MM. All dates are in UTC. 2021-08
+    #[serde(rename = "forMonth")]
+    pub for_month: String,
+    /// Return data as Json or binary CSV.
+    #[serde(rename = "returnType")]
+    pub return_type: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct MonthlyActiveAccountsResponse {
+    pub data: Vec<MonthlyActiveAccountModel>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct MonthlyActiveAccountModel {
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+    pub group: String,
+    pub sessions: i32,
+    pub events: i32,
+    pub accounts: i32,
+    #[serde(rename = "openPositions")]
+    pub open_positions: i32,
+    pub orders: i32,
+}
