@@ -11,7 +11,7 @@ use trade_locker_connector::brand::{AccountOperationRequest, AccountStatus, Acco
 async fn main() {
     let api_key = std::env::var("TRADE_LOCKER_API_KEY").unwrap();
     let config = ExampleBrandApiConfig {
-        api_url: "https://api-dev.tradelocker.com".to_string(),
+        api_url: "https://api.tradelocker.com".to_string(),
         api_key,
     };
     let brand_api = BrandApiClient::new(config);
@@ -19,7 +19,6 @@ async fn main() {
     //load_test(&brand_api).await;
     //is_api_alive(&brand_api).await;
     //get_api_status(&brand_api).await;
-
     //create_user(&brand_api).await;
     //create_account(&brand_api).await;
     //activate_account(&brand_api).await;
@@ -41,7 +40,8 @@ async fn main() {
     //get_orders(&brand_api).await;
     //deposit_account(&brand_api).await;
     //withdraw_account(&brand_api).await;
-    get_monthly_active_accounts(&brand_api).await;
+    //get_monthly_active_accounts(&brand_api).await;
+    get_closed_trades_report(&brand_api).await;
 
     println!("elapsed time: {:?}", instant.elapsed());
 }
@@ -56,7 +56,8 @@ pub fn get_account_id() -> String {
     //"L#705611".to_string()
     //"L#705618".to_string()
     //"L#705519".to_string()
-    "L#708261".to_string()
+    //"L#708261".to_string()
+    "D#847500".to_string()
 }
 
 pub fn get_password() -> String {
@@ -73,7 +74,7 @@ pub fn get_group_id() -> Option<String> {
 }
 
 pub fn get_account_type() -> AccountType {
-    AccountType::Live
+    AccountType::Demo
 }
 
 pub async fn create_user(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
@@ -152,12 +153,26 @@ pub async fn withdraw_account(rest_client: &BrandApiClient<ExampleBrandApiConfig
 pub async fn get_monthly_active_accounts(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_monthly_active_accounts(&MonthlyActiveAccountsRequest {
-            for_month: "2024-11".to_string(),
+            for_month: "2024-12".to_string(),
             return_type: "json".to_string(),
         })
         .await;
 
     println!("{:?}", resp)
+}
+
+pub async fn get_closed_trades_report(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
+    let resp = rest_client
+        .get_closed_trades_report(&GetClosedTradesReportRequest {
+            account_id: get_account_id(),
+            account_type: get_account_type(),
+            cursor: None,
+            limit: Some(1000.to_string()),
+        })
+        .await;
+    
+    println!("{:?}", resp)
+
 }
 
 pub async fn close_account_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
