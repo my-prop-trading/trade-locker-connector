@@ -1,7 +1,18 @@
 use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
-use crate::brand::{AccountModel, AccountOperationRequest, AccountOperationResponse, CancelOrderRequest, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest, CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest, CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse, GetApiStatusResponse, GetAssetsRequest, GetAssetsResponse, GetClosedTradesReportRequest, GetClosedTradesReportResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest, GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse, GetOrdersRequest, GetOrdersResponse, GetTradesReportRequest, GetTradesReportResponse, MonthlyActiveAccountsRequest, MonthlyActiveAccountsResponse, SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse};
+use crate::brand::{
+    AccountModel, AccountOperationRequest, AccountOperationResponse, CancelOrderRequest,
+    CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest,
+    CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest,
+    CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse,
+    GetApiStatusResponse, GetAssetsRequest, GetAssetsResponse, GetClosedTradesReportRequest,
+    GetClosedTradesReportResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest,
+    GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse,
+    GetOrdersRequest, GetOrdersResponse, GetTradesReportRequest, GetTradesReportResponse,
+    MonthlyActiveAccountsRequest, MonthlyActiveAccountsResponse, SetAccountGroupRequest,
+    SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse,
+};
 use error_chain::bail;
 use http::{Method, StatusCode};
 use reqwest::header::{HeaderMap, HeaderValue};
@@ -139,10 +150,7 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         self.send_deserialized(endpoint, Some(request)).await
     }
 
-    pub async fn get_assets(
-        &self,
-        request: &GetAssetsRequest,
-    ) -> Result<GetAssetsResponse, Error> {
+    pub async fn get_assets(&self, request: &GetAssetsRequest) -> Result<GetAssetsResponse, Error> {
         let endpoint = BrandApiEndpoint::GetAssets;
         self.send_deserialized(endpoint, Some(request)).await
     }
@@ -200,20 +208,14 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         self.send_deserialized(endpoint, Some(request)).await
     }
 
-    pub async fn cancel_order(
-        &self,
-        request: &CancelOrderRequest,
-    ) -> Result<(), Error> {
+    pub async fn cancel_order(&self, request: &CancelOrderRequest) -> Result<(), Error> {
         let endpoint = BrandApiEndpoint::CancelOrder;
         let _resp = self.send(endpoint, Some(request)).await?;
-        
+
         Ok(())
     }
 
-    pub async fn get_orders(
-        &self,
-        request: &GetOrdersRequest,
-    ) -> Result<GetOrdersResponse, Error> {
+    pub async fn get_orders(&self, request: &GetOrdersRequest) -> Result<GetOrdersResponse, Error> {
         let endpoint = BrandApiEndpoint::GetOrders;
         self.send_deserialized(endpoint, Some(request)).await
     }
@@ -233,6 +235,11 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
     ) -> Result<String, Error> {
         let base_url = &self.config.get_api_url().await;
         let (builder, url, request) = self.get_builder(base_url, endpoint, request).await?;
+
+        if std::env::var("DEBUG").is_ok() {
+            println!("execute send: {url} {:?}", request);
+        }
+
         let response = builder.send().await;
 
         handle_text(response?, &request, &url, endpoint.get_http_method()).await
@@ -245,6 +252,11 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
     ) -> Result<T, Error> {
         let base_url = &self.config.get_api_url().await;
         let (builder, url, request) = self.get_builder(base_url, endpoint, request).await?;
+
+        if std::env::var("DEBUG").is_ok() {
+            println!("execute send_deserialized: {url} {:?}", request);
+        }
+
         let response = builder.send().await;
 
         handle_json(response?, request, &url, endpoint.get_http_method()).await
@@ -338,6 +350,13 @@ async fn handle_text(
     request_url: &str,
     request_method: Method,
 ) -> Result<String, Error> {
+    if std::env::var("DEBUG").is_ok() {
+        println!(
+            "execute handle_text: {:?} {} {:?} {:?}",
+            request_method, request_url, request_json, response,
+        );
+    }
+
     match response.status() {
         StatusCode::OK | StatusCode::CREATED | StatusCode::NO_CONTENT => {
             let result: Result<String, _> = response.text().await;
