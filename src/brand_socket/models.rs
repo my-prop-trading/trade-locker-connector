@@ -18,10 +18,21 @@ pub enum BrandSocketEvent {
     ConnectionErrorMessage(ConnectionErrorMessage),
 }
 
+impl BrandSocketEvent {
+    pub fn get_message_id(&self) -> &'static str {
+        match self {
+            BrandSocketEvent::AccountStatus(_) => "AccountStatus",
+            BrandSocketEvent::Property(_) => "Property",
+            BrandSocketEvent::Position(_) => "Position",
+            BrandSocketEvent::ClosePosition(_) => "ClosePosition",
+            BrandSocketEvent::OpenOrder(_) => "OpenOrder",
+            BrandSocketEvent::ConnectionErrorMessage(_) => "ConnectionErrorMessage",
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AccountStatusMessage {
-    // Allowed values: "AccountStatus"
-    pub r#type: String,
     pub account_id: String,
     pub currency: String,
     pub balance: String,
@@ -33,10 +44,6 @@ pub struct AccountStatusMessage {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PropertyMessage {
-    // Property messages. SyncEnd property message means that the initial data sync is over and the upcoming messages are realtime events from the Tradelocker engine.
-    //
-    // Allowed values: "Property"
-    pub r#type: String,
     // Name of the property.
     //
     // Allowed values: "SyncEnd"
@@ -68,8 +75,6 @@ pub struct PositionMessage {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ClosePositionMessage {
-    // Allowed values: "ClosePosition"
-    pub r#type: String,
     pub positions_id: String,
     pub close_price: String,
     pub close_date_time: String,
@@ -77,8 +82,6 @@ pub struct ClosePositionMessage {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct OpenOrderMessage {
-    // Allowed values: "OpenOrder"
-    pub r#type: String,
     pub account_id: String,
     pub order_id: String,
     pub instrument: String,
@@ -93,9 +96,7 @@ pub struct OpenOrderMessage {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ConnectionErrorMessage {
-    // Connection status.
-    //
-    // Allowed values: "ok""error"
+    // Allowed values: "ok", "error"
     pub status: String,
     pub message: String,
 }
