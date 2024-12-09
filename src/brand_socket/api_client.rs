@@ -18,6 +18,25 @@ impl Default for SocketIoConfig {
     }
 }
 
+#[async_trait::async_trait]
+pub trait BrandSocketApiConfig {
+    async fn get_server_url(&self) -> String;
+    async fn get_api_key(&self) -> String;
+}
+
 pub struct BrandSocketApiClient {
     event_handler: Arc<dyn BrandSocketEventHandler + Send + Sync + 'static>,
+    config: Arc<dyn BrandSocketApiConfig + Send + Sync>,
+}
+
+impl BrandSocketApiClient {
+    pub fn new(
+        event_handler: Arc<dyn BrandSocketEventHandler + Send + Sync>,
+        config: Arc<dyn BrandSocketApiConfig + Send + Sync>,
+    ) -> Self {
+        Self {
+            event_handler,
+            config,
+        }
+    }
 }
