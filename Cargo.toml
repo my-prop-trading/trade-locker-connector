@@ -8,6 +8,7 @@ authors = ["gorin <mxmgorin@gmail.com>"]
 [dependencies]
 rust-extensions = { tag = "0.1.4", git = "https://github.com/MyJetTools/rust-extensions.git" }
 
+
 http = "*"
 serde = { version = "*", features = ["derive"] }
 serde_json = "*"
@@ -28,3 +29,4 @@ md5 = "0.7.0"
 strum = { version = "0.26", features = ["derive"] }
 prost = "0.13.1"
 tonic = "0.12.1"
+rust_socketio = "*"
