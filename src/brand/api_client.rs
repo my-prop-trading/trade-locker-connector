@@ -43,9 +43,10 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
     pub async fn create_user(
         &self,
         request: &CreateUserRequest,
+        idempotency_key: Option<&str>,
     ) -> Result<CreateUserResponse, Error> {
         let endpoint = BrandApiEndpoint::CreateUser;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), idempotency_key).await
     }
 
     pub async fn check_email(
@@ -53,27 +54,28 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         request: &CheckEmailRequest,
     ) -> Result<CheckEmailResponse, Error> {
         let endpoint = BrandApiEndpoint::CheckEmail;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     pub async fn set_user_password(&self, request: &SetUserPasswordRequest) -> Result<(), Error> {
         let endpoint = BrandApiEndpoint::SetUserPassword;
-        let _resp = self.send(endpoint, Some(request)).await?;
+        let _resp = self.send(endpoint, Some(request), None).await?;
 
         Ok(())
     }
 
     pub async fn get_account(&self, request: &GetAccountRequest) -> Result<AccountModel, Error> {
         let endpoint = BrandApiEndpoint::GetAccount;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     pub async fn create_account(
         &self,
         request: &CreateAccountRequest,
+        idempotency_key: Option<&str>,
     ) -> Result<AccountModel, Error> {
         let endpoint = BrandApiEndpoint::CreateAccount;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), idempotency_key).await
     }
 
     pub async fn activate_account(
@@ -81,7 +83,7 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         request: &UpdateAccountStatusRequest,
     ) -> Result<UpdateAccountStatusResponse, Error> {
         let endpoint = BrandApiEndpoint::ActivateAccount;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     /// Restricts an existing TradeLocker account. Restricted accounts cannot open positions.
@@ -90,7 +92,7 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         request: &UpdateAccountStatusRequest,
     ) -> Result<UpdateAccountStatusResponse, Error> {
         let endpoint = BrandApiEndpoint::RestrictAccount;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     /// Suspend an existing TradeLocker account.
@@ -100,12 +102,12 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         request: &UpdateAccountStatusRequest,
     ) -> Result<UpdateAccountStatusResponse, Error> {
         let endpoint = BrandApiEndpoint::SuspendAccount;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     pub async fn set_account_group(&self, request: &SetAccountGroupRequest) -> Result<(), Error> {
         let endpoint = BrandApiEndpoint::SetAccountGroup;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     pub async fn close_account_positions(
@@ -113,7 +115,7 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         request: &CloseAccountPositionsRequest,
     ) -> Result<CloseAccountPositionsResponse, Error> {
         let endpoint = BrandApiEndpoint::CloseAccountPositions;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     /// Add or remove credit to specified account of a user.
@@ -121,25 +123,28 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
     pub async fn credit_account(
         &self,
         request: &CreditAccountRequest,
+        idempotency_key: Option<&str>,
     ) -> Result<CreditAccountResponse, Error> {
         let endpoint = BrandApiEndpoint::CreditAccount;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), idempotency_key).await
     }
 
     pub async fn deposit_account(
         &self,
         request: &AccountOperationRequest,
+        idempotency_key: Option<&str>,
     ) -> Result<AccountOperationResponse, Error> {
         let endpoint = BrandApiEndpoint::Deposit;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), idempotency_key).await
     }
 
     pub async fn withdraw_account(
         &self,
         request: &AccountOperationRequest,
+        idempotency_key: Option<&str>,
     ) -> Result<AccountOperationResponse, Error> {
         let endpoint = BrandApiEndpoint::Withdraw;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), idempotency_key).await
     }
 
     pub async fn get_instruments(
@@ -147,12 +152,12 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         request: &GetInstrumentsRequest,
     ) -> Result<GetInstrumentsResponse, Error> {
         let endpoint = BrandApiEndpoint::GetInstruments;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     pub async fn get_assets(&self, request: &GetAssetsRequest) -> Result<GetAssetsResponse, Error> {
         let endpoint = BrandApiEndpoint::GetAssets;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     /// Get all open positions. Positions are sorted by open timestamp in reverse-chronological order,
@@ -162,7 +167,7 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         request: &GetOpenedPositionsRequest,
     ) -> Result<GetOpenedPositionsResponse, Error> {
         let endpoint = BrandApiEndpoint::GetOpenedPositions;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     pub async fn get_closed_trades_report(
@@ -170,12 +175,12 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         request: &GetClosedTradesReportRequest,
     ) -> Result<GetClosedTradesReportResponse, Error> {
         let endpoint = BrandApiEndpoint::GetClosedTradesReport;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     pub async fn get_groups(&self, request: &GetGroupsRequest) -> Result<GetGroupsResponse, Error> {
         let endpoint = BrandApiEndpoint::GetGroups;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     pub async fn get_accounts_report(
@@ -183,19 +188,19 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         request: &GetAccountsReportRequest,
     ) -> Result<GetAccountsReportResponse, Error> {
         let endpoint = BrandApiEndpoint::GetAccountsReport;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     pub async fn get_api_status(&self) -> Result<GetApiStatusResponse, Error> {
         let endpoint = BrandApiEndpoint::GetApiStatus;
         let request: Option<&String> = None;
-        self.send_deserialized(endpoint, request).await
+        self.send_deserialized(endpoint, request, None).await
     }
 
     pub async fn is_api_alive(&self) -> Result<bool, Error> {
         let endpoint = BrandApiEndpoint::IsApiAlive;
         let request: Option<&String> = None;
-        let resp = self.send(endpoint, request).await?;
+        let resp = self.send(endpoint, request, None).await?;
 
         Ok(resp == "1")
     }
@@ -205,19 +210,19 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         request: &GetTradesReportRequest,
     ) -> Result<GetTradesReportResponse, Error> {
         let endpoint = BrandApiEndpoint::GetTradesReport;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     pub async fn cancel_order(&self, request: &CancelOrderRequest) -> Result<(), Error> {
         let endpoint = BrandApiEndpoint::CancelOrder;
-        let _resp = self.send(endpoint, Some(request)).await?;
+        let _resp = self.send(endpoint, Some(request), None).await?;
 
         Ok(())
     }
 
     pub async fn get_orders(&self, request: &GetOrdersRequest) -> Result<GetOrdersResponse, Error> {
         let endpoint = BrandApiEndpoint::GetOrders;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     pub async fn get_monthly_active_accounts(
@@ -225,16 +230,17 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         request: &MonthlyActiveAccountsRequest,
     ) -> Result<MonthlyActiveAccountsResponse, Error> {
         let endpoint = BrandApiEndpoint::MonthlyActiveAccounts;
-        self.send_deserialized(endpoint, Some(request)).await
+        self.send_deserialized(endpoint, Some(request), None).await
     }
 
     async fn send<R: Serialize>(
         &self,
         endpoint: BrandApiEndpoint,
         request: Option<&R>,
+        idempotency_key: Option<&str>,
     ) -> Result<String, Error> {
         let base_url = &self.config.get_api_url().await;
-        let (builder, url, request) = self.get_builder(base_url, endpoint, request).await?;
+        let (builder, url, request) = self.get_builder(base_url, endpoint, request, idempotency_key).await?;
 
         if std::env::var("DEBUG").is_ok() {
             println!("execute send: {url} {:?}", request);
@@ -249,9 +255,10 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         &self,
         endpoint: BrandApiEndpoint,
         request: Option<&R>,
+        idempotency_key: Option<&str>,
     ) -> Result<T, Error> {
         let base_url = &self.config.get_api_url().await;
-        let (builder, url, request) = self.get_builder(base_url, endpoint, request).await?;
+        let (builder, url, request) = self.get_builder(base_url, endpoint, request, idempotency_key).await?;
 
         if std::env::var("DEBUG").is_ok() {
             println!("execute send_deserialized: {url} {:?}", request);
@@ -267,6 +274,7 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         base_url: &str,
         endpoint: BrandApiEndpoint,
         request: Option<&R>,
+        idempotency_key: Option<&str>,
     ) -> Result<(RequestBuilder, String, Option<String>), Error> {
         let http_method = endpoint.get_http_method();
         let mut request_json = None;
@@ -285,12 +293,12 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
             request_json = Some(body.clone());
             builder = builder.body(body);
         }
-        let headers = self.build_headers().await;
+        let headers = self.build_headers(idempotency_key).await;
 
         Ok((builder.headers(headers), url, request_json))
     }
 
-    async fn build_headers(&self) -> HeaderMap {
+    async fn build_headers(&self, idempotency_key: Option<&str>) -> HeaderMap {
         let mut custom_headers = HeaderMap::new();
         let json_content_str = "application/json";
 
@@ -303,6 +311,10 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
             "brand-api-key",
             self.config.get_api_key().await.parse().unwrap(),
         );
+
+        if let Some(idempotency_key) = idempotency_key {
+            custom_headers.insert("Idempotency-Key", HeaderValue::from_str(idempotency_key).unwrap());
+        }
 
         custom_headers
     }
