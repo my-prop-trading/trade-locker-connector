@@ -5,7 +5,14 @@ use std::sync::Arc;
 use tokio::sync::Semaphore;
 use tokio::time::Instant;
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
-use trade_locker_connector::brand::{AccountOperationRequest, AccountStatus, AccountType, CancelOrderRequest, CheckEmailRequest, CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest, GetAccountRequest, GetAccountsReportRequest, GetAssetsRequest, GetClosedTradesReportRequest, GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, GetOrdersRequest, GetTradesReportRequest, MonthlyActiveAccountsRequest, SetUserPasswordRequest, UpdateAccountStatusRequest};
+use trade_locker_connector::brand::{
+    AccountOperationRequest, AccountStatus, AccountType, CancelOrderRequest, CheckEmailRequest,
+    CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest,
+    GetAccountRequest, GetAccountsReportRequest, GetAssetsRequest, GetClosedTradesReportRequest,
+    GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, GetOrdersRequest,
+    GetTradesReportRequest, MonthlyActiveAccountsRequest, SetUserPasswordRequest,
+    UpdateAccountStatusRequest,
+};
 
 #[tokio::main]
 async fn main() {
@@ -73,6 +80,10 @@ pub fn get_group_id() -> Option<String> {
                                //Some("709605".to_string()) // dev
 }
 
+pub fn get_idempotency_key() -> String {
+    "12345".to_string()
+}
+
 pub fn get_account_type() -> AccountType {
     AccountType::Demo
 }
@@ -84,7 +95,7 @@ pub async fn create_user(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
             password: get_password(),
             first_name: Some("test".to_string()),
             last_name: Some("test".to_string()),
-        })
+        }, Some(&get_idempotency_key()))
         .await;
 
     println!("{:?}", resp)
@@ -98,7 +109,7 @@ pub async fn create_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>)
             account_type: get_account_type(),
             currency: "USD".to_string(),
             group_id: get_group_id(),
-        })
+        }, Some(&get_idempotency_key()))
         .await;
 
     println!("{:?}", resp)
@@ -120,7 +131,7 @@ pub async fn credit_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>)
             account_id: get_account_id(),
             amount: "10000".to_string(),
             note: None,
-        })
+        }, Some(&get_idempotency_key()))
         .await;
 
     println!("{:?}", resp)
@@ -132,7 +143,7 @@ pub async fn deposit_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>
             account_id: get_account_id(),
             amount: "10000".to_string(),
             note: None,
-        })
+        }, Some(&get_idempotency_key()))
         .await;
 
     println!("{:?}", resp)
@@ -144,7 +155,7 @@ pub async fn withdraw_account(rest_client: &BrandApiClient<ExampleBrandApiConfig
             account_id: get_account_id(),
             amount: "1000".to_string(),
             note: None,
-        })
+        }, Some(&get_idempotency_key()))
         .await;
 
     println!("{:?}", resp)
@@ -170,9 +181,8 @@ pub async fn get_closed_trades_report(rest_client: &BrandApiClient<ExampleBrandA
             limit: Some(1000.to_string()),
         })
         .await;
-    
-    println!("{:?}", resp)
 
+    println!("{:?}", resp)
 }
 
 pub async fn close_account_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
@@ -209,7 +219,6 @@ pub async fn get_closed_positions(rest_client: &BrandApiClient<ExampleBrandApiCo
 }
 
 pub async fn get_opened_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
-
     let resp = rest_client
         .get_opened_positions(&GetOpenedPositionsRequest {
             account_id: None,
@@ -304,9 +313,11 @@ pub async fn is_api_alive(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
 }
 
 pub async fn get_assets(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
-    let resp = rest_client.get_assets(&GetAssetsRequest {
-        account_type: get_account_type(),
-    }).await;
+    let resp = rest_client
+        .get_assets(&GetAssetsRequest {
+            account_type: get_account_type(),
+        })
+        .await;
 
     println!("{:?}", resp)
 }
@@ -322,12 +333,11 @@ pub async fn get_trades_report(rest_client: &BrandApiClient<ExampleBrandApiConfi
     };
     println!("==========");
     println!("{:?} sending {:?}", Utc::now(), request);
-    
+
     let resp = rest_client.get_trades_report(&request).await;
 
     println!("{:?} got response {:?}", Utc::now(), resp,);
     println!("==========");
-
 }
 pub fn date_to_string(date: DateTime<Utc>) -> String {
     format!("{}", date.format(FORMAT))
@@ -402,21 +412,25 @@ impl BrandApiConfig for ExampleBrandApiConfig {
 }
 
 pub async fn get_orders(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
-    let resp = rest_client.get_orders(&GetOrdersRequest {
-        account_type: get_account_type(),
-        account_id: Some("L#708261".to_string()),
-        offset: None,
-        limit: Some(1000),
-    }).await;
+    let resp = rest_client
+        .get_orders(&GetOrdersRequest {
+            account_type: get_account_type(),
+            account_id: Some("L#708261".to_string()),
+            offset: None,
+            limit: Some(1000),
+        })
+        .await;
 
     println!("{:?}", resp)
 }
 
 pub async fn cancel_order(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
-    let resp = rest_client.cancel_order(&CancelOrderRequest {
-        account_type: get_account_type(),
-        order_id: "72057594042846841".to_string(),
-    }).await;
+    let resp = rest_client
+        .cancel_order(&CancelOrderRequest {
+            account_type: get_account_type(),
+            order_id: "72057594042846841".to_string(),
+        })
+        .await;
 
     println!("{:?}", resp)
 }
