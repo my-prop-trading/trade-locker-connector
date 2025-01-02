@@ -18,7 +18,7 @@ use trade_locker_connector::brand::{
 async fn main() {
     let api_key = std::env::var("TRADE_LOCKER_API_KEY").unwrap();
     let config = ExampleBrandApiConfig {
-        api_url: "https://api.tradelocker.com".to_string(),
+        api_url: "https://api-dev.tradelocker.com".to_string(),
         api_key,
     };
     let brand_api = BrandApiClient::new(config);
@@ -27,7 +27,7 @@ async fn main() {
     //is_api_alive(&brand_api).await;
     //get_api_status(&brand_api).await;
     //create_user(&brand_api).await;
-    //create_account(&brand_api).await;
+    create_account(&brand_api).await;
     //activate_account(&brand_api).await;
     //credit_account(&brand_api).await;
     //close_account_positions(&brand_api).await;
@@ -48,14 +48,14 @@ async fn main() {
     //deposit_account(&brand_api).await;
     //withdraw_account(&brand_api).await;
     //get_monthly_active_accounts(&brand_api).await;
-    get_closed_trades_report(&brand_api).await;
+    //get_closed_trades_report(&brand_api).await;
 
     println!("elapsed time: {:?}", instant.elapsed());
 }
 
 pub fn get_user_id() -> String {
-    "e1ae0e5a-863e-41f2-889f-a2194f3561b5".to_string() // prod
-                                                       //"63f3c61e-e11a-495c-82a4-003b244e8434".to_string() // dev
+    //"e1ae0e5a-863e-41f2-889f-a2194f3561b5".to_string() // prod
+    "226ada22-8ab4-42f4-a03a-764020f530d3".to_string() // dev
 }
 
 pub fn get_account_id() -> String {
@@ -76,16 +76,16 @@ pub fn get_email() -> String {
 }
 
 pub fn get_group_id() -> Option<String> {
-    Some("829256".to_string()) // prod PRO365-50K-1STEP
-                               //Some("709605".to_string()) // dev
+    //Some("829256".to_string()) // prod PRO365-50K-1STEP
+    Some("709605".to_string()) // dev
 }
 
 pub fn get_idempotency_key() -> String {
-    "12345".to_string()
+    "274944e0-3047-4c05-b04a-0f695b744589".to_string()
 }
 
 pub fn get_account_type() -> AccountType {
-    AccountType::Demo
+    AccountType::Live
 }
 
 pub async fn create_user(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
