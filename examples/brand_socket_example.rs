@@ -21,6 +21,10 @@ async fn main() {
     if let Err(error) = result {
         println!("Error connect: {:?}", error);
     }
+
+    loop {
+        tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+    }
 }
 
 pub struct ExampleBrandSocketApiConfig {
