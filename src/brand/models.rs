@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 use serde_derive::Deserialize;
+use crate::models::AccountType;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CreateUserRequest {
@@ -118,16 +119,6 @@ pub struct AccountModel {
     /// The date and time when the account was created.
     #[serde(rename = "createdDateTime")]
     pub created_date_time: String,
-}
-
-#[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
-pub enum AccountType {
-    #[strum(to_string = "DEMO")]
-    #[serde(rename = "DEMO")]
-    Demo,
-    #[strum(to_string = "LIVE")]
-    #[serde(rename = "LIVE")]
-    Live,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

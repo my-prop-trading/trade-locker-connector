@@ -6,13 +6,14 @@ use tokio::sync::Semaphore;
 use tokio::time::Instant;
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
 use trade_locker_connector::brand::{
-    AccountOperationRequest, AccountStatus, AccountType, CancelOrderRequest, CheckEmailRequest,
+    AccountOperationRequest, AccountStatus, CancelOrderRequest, CheckEmailRequest,
     CloseAccountPositionsRequest, CreateAccountRequest, CreateUserRequest, CreditAccountRequest,
     GetAccountRequest, GetAccountsReportRequest, GetAssetsRequest, GetClosedTradesReportRequest,
     GetGroupsRequest, GetInstrumentsRequest, GetOpenedPositionsRequest, GetOrdersRequest,
     GetTradesReportRequest, MonthlyActiveAccountsRequest, SetUserPasswordRequest,
     UpdateAccountStatusRequest,
 };
+use trade_locker_connector::models::AccountType;
 
 #[tokio::main]
 async fn main() {
