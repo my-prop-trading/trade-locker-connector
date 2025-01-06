@@ -67,7 +67,7 @@ impl rust_extensions::Logger for ConsoleLogger {
         &self,
         _process: String,
         message: String,
-        _ctx: Option<std::collections::HashMap<String, String>>,
+        _ctx: Option<HashMap<String, String>>,
     ) {
         println!("INFO:");
         println!("{}", message);
@@ -78,7 +78,7 @@ impl rust_extensions::Logger for ConsoleLogger {
         &self,
         _process: String,
         message: String,
-        _ctx: Option<std::collections::HashMap<String, String>>,
+        _ctx: Option<HashMap<String, String>>,
     ) {
         println!("WARNING:");
         println!("{}", message);
@@ -89,7 +89,7 @@ impl rust_extensions::Logger for ConsoleLogger {
         &self,
         _process: String,
         message: String,
-        _ctx: Option<std::collections::HashMap<String, String>>,
+        _ctx: Option<HashMap<String, String>>,
     ) {
         println!("ERROR:");
         println!("{}", message);
@@ -100,7 +100,7 @@ impl rust_extensions::Logger for ConsoleLogger {
         &self,
         _process: String,
         message: String,
-        _ctx: Option<std::collections::HashMap<String, String>>,
+        _ctx: Option<HashMap<String, String>>,
     ) {
         println!("FATAL ERROR:");
         println!("{}", message);
