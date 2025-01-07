@@ -34,7 +34,7 @@ impl BrandSocketApiClient {
         }
     }
 
-    pub async fn connect(self: Arc<Self>) -> Result<(), String> {
+    pub async fn connect(&self) -> Result<(), String> {
         my_web_socket_client::my_tls::install_default_crypto_providers();
         let socket_io_client = MySocketIoClient::new(
             "trade-locker-brand-socket",
@@ -114,7 +114,7 @@ impl Default for SocketIoConfig {
             namespace: "/brand-socket",
             handshake_path: "/brand-socket/socket.io",
             //transport: "websocket",
-            api_key_header_name: "BRAND_API_KEY",
+            api_key_header_name: "brand-api-key",
             query_param_type_name: "type",
         }
     }

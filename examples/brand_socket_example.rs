@@ -15,7 +15,7 @@ async fn main() {
         //server_url: "wss://api.tradelocker.com/brand-api/socket.io/".to_string(),
         api_key,
     });
-    let brand_api = Arc::new(BrandSocketApiClient::new(Arc::new(ExampleBrandSocketApiEventHandler), config, Arc::new(ConsoleLogger)));
+    let brand_api = BrandSocketApiClient::new(Arc::new(ExampleBrandSocketApiEventHandler), config, Arc::new(ConsoleLogger));
     let result = brand_api.connect().await;
 
     if let Err(error) = result {
