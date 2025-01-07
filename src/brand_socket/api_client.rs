@@ -27,7 +27,7 @@ impl BrandSocketApiClient {
         let config_wrapper = Arc::new(BrandSocketApiConfigWrapper::new(config));
         
         Self {
-            inner: Arc::new(BrandSocketApiInner::new(handler)),
+            inner: Arc::new(BrandSocketApiInner::new(handler, Arc::clone(&logger))),
             config_wrapper,
             socket_io_client: Default::default(),
             logger,

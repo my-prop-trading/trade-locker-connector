@@ -1,5 +1,6 @@
 use super::models::*;
 use my_socket_io_client::{SocketIoCallbacks, SocketIoConnection, SocketIoEventSubscriberCallback};
+use rust_extensions::Logger;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
@@ -13,13 +14,18 @@ pub trait BrandSocketApiEventHandler {
 pub struct BrandSocketApiInner {
     handler: Arc<dyn BrandSocketApiEventHandler + Send + Sync + 'static>,
     connection: RwLock<Option<Arc<SocketIoConnection>>>,
+    logger: Arc<dyn Logger + Send + Sync + 'static>,
 }
 
 impl BrandSocketApiInner {
-    pub fn new(handler: Arc<dyn BrandSocketApiEventHandler + Send + Sync + 'static>) -> Self {
+    pub fn new(
+        handler: Arc<dyn BrandSocketApiEventHandler + Send + Sync + 'static>,
+        logger: Arc<dyn Logger + Send + Sync + 'static>,
+    ) -> Self {
         Self {
             handler,
             connection: Default::default(),
+            logger,
         }
     }
 
@@ -46,10 +52,26 @@ impl SocketIoCallbacks for BrandSocketApiInner {
 }
 
 #[async_trait::async_trait]
-impl SocketIoEventSubscriberCallback<BrandSocketEvent, ()> for BrandSocketApiInner {
-    async fn on_event(&self, event: BrandSocketEvent) -> () {
-        self.handler.on_event(event).await;
-        
+impl SocketIoEventSubscriberCallback<BrandSocketEventDeserialized, ()> for BrandSocketApiInner {
+    async fn on_event(&self, event: BrandSocketEventDeserialized) -> () {
+        match event.result {
+            Ok(event) => {
+                self.handler.on_event(event).await;
+            }
+            Err(err) => match err {
+                BrandSocketEventDeserializeErr::NotSupported(err) => self.logger.write_error(
+                    "BrandSocketApiInner.on_event".to_string(),
+                    format!("Not supported event: {}", err),
+                    None,
+                ),
+                BrandSocketEventDeserializeErr::Serde(err) => self.logger.write_error(
+                    "BrandSocketApiInner.on_event".to_string(),
+                    format!("Failed to deserialize: {}", err),
+                    None,
+                ),
+            },
+        }
+
         ()
     }
 }

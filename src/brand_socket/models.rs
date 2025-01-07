@@ -22,10 +22,19 @@ pub enum BrandSocketEvent {
     // Details about new or updated order, allowing you to track pending trades in real-time.
     OpenOrder(OpenOrderMessage),
     // Connection updates and errors
-    ConnectionErrorMessage(ConnectionErrorMessage),
+    ConnectionError(ConnectionErrorMessage),
 }
 
-impl SocketIoSubscribeEventModel for BrandSocketEvent {
+pub struct BrandSocketEventDeserialized {
+    pub result: Result<BrandSocketEvent, BrandSocketEventDeserializeErr>,
+}
+
+pub enum BrandSocketEventDeserializeErr {
+    NotSupported(String),
+    Serde(serde_json::Error),
+}
+
+impl SocketIoSubscribeEventModel for BrandSocketEventDeserialized {
     const NAME_SPACE: &'static str = "/brand-socket";
 
     const EVENT_NAME: &'static str = "stream";
@@ -33,41 +42,62 @@ impl SocketIoSubscribeEventModel for BrandSocketEvent {
     fn deserialize(payload: &str) -> Self {
         let type_model: StreamTypeModel = serde_json::from_str(payload).unwrap();
 
-        match type_model.r#type.as_str() {
-            id if id == AccountStatusMessage::get_id() => {
-                Self::AccountStatus(serde_json::from_str(payload).unwrap())
+        let result = match type_model.r#type.as_str() {
+            id if id == AccountStatusMessage::get_message_type() => {
+                match serde_json::from_str(payload) {
+                    Ok(event) => Ok(BrandSocketEvent::AccountStatus(event)),
+                    Err(err) => Err(BrandSocketEventDeserializeErr::Serde(err)),
+                }
             }
-            id if id == PropertyMessage::get_id() => {
-                Self::Property(serde_json::from_str(payload).unwrap())
+            id if id == PropertyMessage::get_message_type() => {
+                match serde_json::from_str(payload) {
+                    Ok(event) => Ok(BrandSocketEvent::Property(event)),
+                    Err(err) => Err(BrandSocketEventDeserializeErr::Serde(err)),
+                }
             }
-            id if id == PositionMessage::get_id() => {
-                Self::Position(serde_json::from_str(payload).unwrap())
+            id if id == PositionMessage::get_message_type() => {
+                match serde_json::from_str(payload) {
+                    Ok(event) => Ok(BrandSocketEvent::Position(event)),
+                    Err(err) => Err(BrandSocketEventDeserializeErr::Serde(err)),
+                }
             }
-            id if id == ClosePositionMessage::get_id() => {
-                Self::ClosePosition(serde_json::from_str(payload).unwrap())
+            id if id == ClosePositionMessage::get_message_type() => {
+                match serde_json::from_str(payload) {
+                    Ok(event) => Ok(BrandSocketEvent::ClosePosition(event)),
+                    Err(err) => Err(BrandSocketEventDeserializeErr::Serde(err)),
+                }
             }
-            id if id == OpenOrderMessage::get_id() => {
-                Self::OpenOrder(serde_json::from_str(payload).unwrap())
+            id if id == OpenOrderMessage::get_message_type() => {
+                match serde_json::from_str(payload) {
+                    Ok(event) => Ok(BrandSocketEvent::OpenOrder(event)),
+                    Err(err) => Err(BrandSocketEventDeserializeErr::Serde(err)),
+                }
             }
-            id if id == ConnectionErrorMessage::get_id() => {
-                Self::ConnectionErrorMessage(serde_json::from_str(payload).unwrap())
+            id if id == ConnectionErrorMessage::get_message_type() => {
+                match serde_json::from_str(payload) {
+                    Ok(event) => Ok(BrandSocketEvent::ConnectionError(event)),
+                    Err(err) => Err(BrandSocketEventDeserializeErr::Serde(err)),
+                }
             }
-            _ => {
-                panic!("Unknown stream type: {}", type_model.r#type);
-            }
-        }
+            _ => Err(BrandSocketEventDeserializeErr::NotSupported(format!(
+                "message type {:?}",
+                type_model
+            ))),
+        };
+
+        BrandSocketEventDeserialized { result }
     }
 }
 
 impl BrandSocketEvent {
-    pub fn get_message_id(&self) -> &'static str {
+    pub fn get_message_type(&self) -> &'static str {
         match self {
-            BrandSocketEvent::AccountStatus(_) => AccountStatusMessage::get_id(),
-            BrandSocketEvent::Property(_) => PropertyMessage::get_id(),
-            BrandSocketEvent::Position(_) => PositionMessage::get_id(),
-            BrandSocketEvent::ClosePosition(_) => ClosePositionMessage::get_id(),
-            BrandSocketEvent::OpenOrder(_) => OpenOrderMessage::get_id(),
-            BrandSocketEvent::ConnectionErrorMessage(_) => ConnectionErrorMessage::get_id(),
+            BrandSocketEvent::AccountStatus(_) => AccountStatusMessage::get_message_type(),
+            BrandSocketEvent::Property(_) => PropertyMessage::get_message_type(),
+            BrandSocketEvent::Position(_) => PositionMessage::get_message_type(),
+            BrandSocketEvent::ClosePosition(_) => ClosePositionMessage::get_message_type(),
+            BrandSocketEvent::OpenOrder(_) => OpenOrderMessage::get_message_type(),
+            BrandSocketEvent::ConnectionError(_) => ConnectionErrorMessage::get_message_type(),
         }
     }
 }
@@ -84,7 +114,7 @@ pub struct AccountStatusMessage {
 }
 
 impl AccountStatusMessage {
-    pub fn get_id() -> &'static str {
+    pub fn get_message_type() -> &'static str {
         "AccountStatus"
     }
 }
@@ -98,7 +128,7 @@ pub struct PropertyMessage {
 }
 
 impl PropertyMessage {
-    pub fn get_id() -> &'static str {
+    pub fn get_message_type() -> &'static str {
         "Property"
     }
 }
@@ -127,7 +157,7 @@ pub struct PositionMessage {
 }
 
 impl PositionMessage {
-    pub fn get_id() -> &'static str {
+    pub fn get_message_type() -> &'static str {
         "Position"
     }
 }
@@ -140,7 +170,7 @@ pub struct ClosePositionMessage {
 }
 
 impl ClosePositionMessage {
-    pub fn get_id() -> &'static str {
+    pub fn get_message_type() -> &'static str {
         "ClosePosition"
     }
 }
@@ -160,7 +190,7 @@ pub struct OpenOrderMessage {
 }
 
 impl OpenOrderMessage {
-    pub fn get_id() -> &'static str {
+    pub fn get_message_type() -> &'static str {
         "OpenOrder"
     }
 }
@@ -173,7 +203,7 @@ pub struct ConnectionErrorMessage {
 }
 
 impl ConnectionErrorMessage {
-    pub fn get_id() -> &'static str {
+    pub fn get_message_type() -> &'static str {
         "ConnectionErrorMessage"
     }
 }
