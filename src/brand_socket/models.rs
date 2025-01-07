@@ -107,8 +107,11 @@ pub struct AccountStatusMessage {
     pub account_id: String,
     pub currency: String,
     pub balance: Option<String>,
+    #[serde(rename = "marginAvailable")]
     pub margin_available: Option<String>,
+    #[serde(rename = "marginUsed")]
     pub margin_used: Option<String>,
+    #[serde(rename = "blockedBalance")]
     pub blocked_balance: Option<String>,
     pub credit: Option<String>,
 }
@@ -135,23 +138,34 @@ impl PropertyMessage {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PositionMessage {
+    #[serde(rename = "accountId")]
     pub account_id: String,
+    #[serde(rename = "positionId")]
     pub position_id: String,
     /// Number of lots in the position.
     pub lots: String,
     /// Size of each lot.
+    #[serde(rename = "lotSize")]
     pub lot_size: Option<String>,
     /// Total number of units in the position.
     pub units: Option<String>,
     pub instrument: String,
+    #[serde(rename = "openPrice")]
     pub open_price: String,
+    #[serde(rename = "openDateTime")]
     pub open_date_time: String,
+    #[serde(rename = "openOrderId")]
     pub open_order_id: String,
+    #[serde(rename = "stopLossOrderId")]
     pub stop_loss_order_id: Option<String>,
+    #[serde(rename = "stopLossLimit")]
     pub stop_loss_limit: Option<String>,
     /// Maintenance margin required for the position.
+    #[serde(rename = "maintMargin")]
     pub maint_margin: String,
+    #[serde(rename = "takeProfitOrderId")]
     pub take_profit_order_id: Option<String>,
+    #[serde(rename = "takeProfitLimit")]
     pub take_profit_limit: Option<String>,
     pub side: String,
     pub fee: Option<String>,
@@ -166,8 +180,11 @@ impl PositionMessage {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ClosePositionMessage {
+    #[serde(rename = "positionId")]
     pub positions_id: String,
+    #[serde(rename = "closePrice")]
     pub close_price: Option<String>,
+    #[serde(rename = "closeDateTime")]
     pub close_date_time: String,
 }
 
@@ -179,10 +196,13 @@ impl ClosePositionMessage {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct OpenOrderMessage {
+    #[serde(rename = "accountId")]
     pub account_id: String,
+    #[serde(rename = "orderId")]
     pub order_id: String,
     pub instrument: String,
     pub amount: String,
+    #[serde(rename = "lotSize")]
     pub lot_size: String,
     /// Allowed values: "BUY""SELL"
     pub side: String,
