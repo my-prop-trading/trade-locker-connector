@@ -106,11 +106,11 @@ impl BrandSocketEvent {
 pub struct AccountStatusMessage {
     pub account_id: String,
     pub currency: String,
-    pub balance: String,
-    pub margin_available: String,
-    pub margin_used: String,
-    pub blocked_balance: String,
-    pub credit: String,
+    pub balance: Option<String>,
+    pub margin_available: Option<String>,
+    pub margin_used: Option<String>,
+    pub blocked_balance: Option<String>,
+    pub credit: Option<String>,
 }
 
 impl AccountStatusMessage {
@@ -135,13 +135,14 @@ impl PropertyMessage {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PositionMessage {
-    // Allowed values: "Position"
-    pub r#type: String,
     pub account_id: String,
     pub position_id: String,
+    /// Number of lots in the position.
     pub lots: String,
-    pub lot_size: String,
-    pub units: String,
+    /// Size of each lot.
+    pub lot_size: Option<String>,
+    /// Total number of units in the position.
+    pub units: Option<String>,
     pub instrument: String,
     pub open_price: String,
     pub open_date_time: String,
@@ -166,7 +167,7 @@ impl PositionMessage {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ClosePositionMessage {
     pub positions_id: String,
-    pub close_price: String,
+    pub close_price: Option<String>,
     pub close_date_time: String,
 }
 
@@ -183,10 +184,10 @@ pub struct OpenOrderMessage {
     pub instrument: String,
     pub amount: String,
     pub lot_size: String,
-    // Allowed values: "BUY""SELL"
+    /// Allowed values: "BUY""SELL"
     pub side: String,
     pub price: String,
-    // Allowed values: "PENDING""EXECUTED""CANCELLED
+    /// Allowed values: "PENDING""EXECUTED""CANCELLED
     pub status: String,
 }
 
@@ -199,8 +200,8 @@ impl OpenOrderMessage {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ConnectionErrorMessage {
     // Allowed values: "ok", "error"
-    pub status: String,
-    pub message: String,
+    pub status: Option<String>,
+    pub message: Option<String>,
 }
 
 impl ConnectionErrorMessage {
