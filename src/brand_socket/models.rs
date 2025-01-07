@@ -206,7 +206,7 @@ pub struct OpenOrderMessage {
     pub lot_size: String,
     /// Allowed values: "BUY""SELL"
     pub side: String,
-    pub price: String,
+    pub price: Option<String>,
     /// Allowed values: "PENDING""EXECUTED""CANCELLED
     pub status: String,
 }
