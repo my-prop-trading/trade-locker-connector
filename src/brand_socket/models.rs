@@ -148,6 +148,7 @@ pub struct PositionMessage {
     pub open_order_id: String,
     pub stop_loss_order_id: Option<String>,
     pub stop_loss_limit: Option<String>,
+    /// Maintenance margin required for the position.
     pub maint_margin: String,
     pub take_profit_order_id: Option<String>,
     pub take_profit_limit: Option<String>,
