@@ -104,6 +104,7 @@ impl BrandSocketEvent {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AccountStatusMessage {
+    #[serde(rename = "accountId")]
     pub account_id: String,
     pub currency: String,
     pub balance: Option<String>,
