@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use my_socket_io_client::SocketIoSubscribeEventModel;
 use serde_derive::{Deserialize, Serialize};
 
@@ -154,7 +155,7 @@ pub struct PositionMessage {
     #[serde(rename = "openPrice")]
     pub open_price: String,
     #[serde(rename = "openDateTime")]
-    pub open_date_time: String,
+    pub open_date_time: DateTime<Utc>,
     #[serde(rename = "openOrderId")]
     pub open_order_id: String,
     #[serde(rename = "stopLossOrderId")]
@@ -186,7 +187,7 @@ pub struct ClosePositionMessage {
     #[serde(rename = "closePrice")]
     pub close_price: Option<String>,
     #[serde(rename = "closeDateTime")]
-    pub close_date_time: String,
+    pub close_date_time: DateTime<Utc>,
 }
 
 impl ClosePositionMessage {
