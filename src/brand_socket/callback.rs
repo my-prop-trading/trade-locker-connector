@@ -1,7 +1,10 @@
 use super::models::*;
 use my_socket_io_client::{SocketIoCallbacks, SocketIoConnection, SocketIoEventSubscriberCallback};
 use rust_extensions::Logger;
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::Ordering::Relaxed;
 use std::sync::Arc;
+use std::time::{Duration, Instant};
 use tokio::sync::RwLock;
 
 #[async_trait::async_trait]
@@ -15,6 +18,7 @@ pub struct BrandSocketApiInner {
     handler: Arc<dyn BrandSocketApiEventHandler + Send + Sync + 'static>,
     connection: RwLock<Option<Arc<SocketIoConnection>>>,
     logger: Arc<dyn Logger + Send + Sync + 'static>,
+    sync_ended: AtomicBool,
 }
 
 impl BrandSocketApiInner {
@@ -26,11 +30,28 @@ impl BrandSocketApiInner {
             handler,
             connection: Default::default(),
             logger,
+            sync_ended: AtomicBool::new(false),
         }
     }
 
-    pub async fn connected(&self) {
-        self.handler.on_connected().await;
+    pub async fn is_connected(&self) -> bool {
+        self.connection.read().await.is_some()
+    }
+
+    pub async fn wait_until_sync_ended(&self, timeout: Duration) -> Result<(), String> {
+        let instant = Instant::now();
+
+        loop {
+            if self.is_connected().await && self.sync_ended.load(Relaxed) {
+                return Ok(());
+            }
+
+            tokio::time::sleep(Duration::from_millis(250)).await;
+
+            if instant.elapsed() > timeout {
+                return Err("Sync timeout".to_string());
+            }
+        }
     }
 }
 
@@ -56,6 +77,19 @@ impl SocketIoEventSubscriberCallback<BrandSocketEventDeserialized, ()> for Brand
     async fn on_event(&self, event: BrandSocketEventDeserialized) -> () {
         match event.result {
             Ok(event) => {
+                match &event {
+                    BrandSocketEvent::AccountStatus(_) => {}
+                    BrandSocketEvent::Property(message) => {
+                        if message.name == "SyncEnd" {
+                            self.sync_ended.store(true, Relaxed);
+                        }
+                    }
+                    BrandSocketEvent::Position(_) => {}
+                    BrandSocketEvent::ClosePosition(_) => {}
+                    BrandSocketEvent::OpenOrder(_) => {}
+                    BrandSocketEvent::ConnectionError(_) => {}
+                };
+
                 self.handler.on_event(event).await;
             }
             Err(err) => match err {

@@ -15,11 +15,31 @@ async fn main() {
         //server_url: "wss://api.tradelocker.com/brand-api/socket.io/".to_string(),
         api_key,
     });
-    let brand_api = BrandSocketApiClient::new(Arc::new(ExampleBrandSocketApiEventHandler), config, Arc::new(ConsoleLogger));
-    let result = brand_api.connect().await;
+    let handler = Arc::new(ExampleBrandSocketApiEventHandler);
 
-    if let Err(error) = result {
-        println!("Error connect: {:?}", error);
+    loop {
+        let brand_api =
+            BrandSocketApiClient::new(handler.clone(), config.clone(), Arc::new(ConsoleLogger));
+        let result = brand_api.connect().await;
+
+        if let Err(error) = result {
+            println!("Error connect: {:?}", error);
+            continue;
+        }
+
+        let result = brand_api
+            .wait_until_sync_ended(std::time::Duration::from_secs(30))
+            .await;
+
+        if let Err(error) = result {
+            println!("Error wait_until_sync_ended: {:?}", error);
+            _ = brand_api.disconnect().await;
+            continue;
+        }
+        println!("===========================");
+        println!("SYNC ENDED");
+        println!("===========================");
+        break;
     }
 
     loop {
@@ -59,20 +79,13 @@ impl BrandSocketApiEventHandler for ExampleBrandSocketApiEventHandler {
         println!("on_connected");
     }
 
-    async fn on_disconnected(&self) {
-        
-    }
+    async fn on_disconnected(&self) {}
 }
 
 pub struct ConsoleLogger;
 
 impl rust_extensions::Logger for ConsoleLogger {
-    fn write_info(
-        &self,
-        _process: String,
-        message: String,
-        _ctx: Option<HashMap<String, String>>,
-    ) {
+    fn write_info(&self, _process: String, message: String, _ctx: Option<HashMap<String, String>>) {
         println!("INFO:");
         println!("{}", message);
         println!("===========================");

@@ -1,8 +1,11 @@
 use crate::brand_socket::callback::{BrandSocketApiEventHandler, BrandSocketApiInner};
-use my_socket_io_client::{my_web_socket_client, MySocketIoClient, SocketIoClientSettings, WsClientSettings};
+use crate::models::AccountType;
+use my_socket_io_client::{
+    my_web_socket_client, MySocketIoClient, SocketIoClientSettings, WsClientSettings,
+};
 use rust_extensions::Logger;
 use std::sync::Arc;
-use crate::models::AccountType;
+use std::time::Duration;
 
 #[async_trait::async_trait]
 pub trait BrandSocketApiConfig {
@@ -25,7 +28,7 @@ impl BrandSocketApiClient {
         logger: Arc<dyn Logger + Send + Sync + 'static>,
     ) -> Self {
         let config_wrapper = Arc::new(BrandSocketApiConfigWrapper::new(config));
-        
+
         Self {
             inner: Arc::new(BrandSocketApiInner::new(handler, Arc::clone(&logger))),
             config_wrapper,
@@ -34,6 +37,12 @@ impl BrandSocketApiClient {
         }
     }
 
+    pub async fn disconnect(&self) -> Result<(), String> {
+        let _ = self.socket_io_client.lock().await.take();
+        
+        Ok(())
+    }
+    
     pub async fn connect(&self) -> Result<(), String> {
         my_web_socket_client::my_tls::install_default_crypto_providers();
         let socket_io_client = MySocketIoClient::new(
@@ -47,11 +56,14 @@ impl BrandSocketApiClient {
         socket_io_client
             .register_subscriber(self.inner.clone())
             .await;
-
         socket_io_client.start();
         self.socket_io_client.lock().await.replace(socket_io_client);
 
         Ok(())
+    }
+
+    pub async fn wait_until_sync_ended(&self, timeout: Duration) -> Result<(), String> {
+        self.inner.wait_until_sync_ended(timeout).await
     }
 }
 
@@ -84,11 +96,17 @@ impl SocketIoClientSettings for BrandSocketApiConfigWrapper {
     }
 
     async fn get_headers(&self, _client_name: &str) -> Vec<(String, String)> {
-        vec![(self.socket_io_conf.api_key_header_name.to_string(), self.config.get_api_key().await.to_string())]
+        vec![(
+            self.socket_io_conf.api_key_header_name.to_string(),
+            self.config.get_api_key().await.to_string(),
+        )]
     }
 
     async fn get_query_params(&self, _client_name: &str) -> Vec<(String, String)> {
-        vec![(self.socket_io_conf.query_param_type_name.to_string(), self.config.get_account_type().await.to_string())]
+        vec![(
+            self.socket_io_conf.query_param_type_name.to_string(),
+            self.config.get_account_type().await.to_string(),
+        )]
     }
 }
 
