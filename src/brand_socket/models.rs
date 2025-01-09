@@ -169,7 +169,7 @@ pub struct PositionMessage {
     pub take_profit_order_id: Option<String>,
     #[serde(rename = "takeProfitLimit")]
     pub take_profit_limit: Option<String>,
-    pub side: String,
+    pub side: PositionSide,
     pub fee: Option<String>,
     pub swaps: Option<String>,
 }
@@ -178,6 +178,16 @@ impl PositionMessage {
     pub fn get_message_type() -> &'static str {
         "Position"
     }
+}
+
+#[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
+pub enum PositionSide {
+    #[strum(to_string = "BUY")]
+    #[serde(rename = "BUY")]
+    Buy,
+    #[strum(to_string = "SELL")]
+    #[serde(rename = "SELL")]
+    Sell,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
