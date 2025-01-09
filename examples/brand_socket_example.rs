@@ -28,14 +28,17 @@ async fn main() {
         }
 
         let result = brand_api
-            .wait_until_sync_ended(std::time::Duration::from_secs(30))
+            .wait_until_sync_ended(std::time::Duration::from_secs(15))
             .await;
 
         if let Err(error) = result {
+            println!("===========================");
             println!("Error wait_until_sync_ended: {:?}", error);
+            println!("===========================");
             _ = brand_api.disconnect().await;
             continue;
         }
+        
         println!("===========================");
         println!("SYNC ENDED");
         println!("===========================");

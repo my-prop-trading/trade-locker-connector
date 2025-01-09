@@ -51,7 +51,7 @@ impl BrandSocketApiClient {
             self.inner.clone(),
             self.logger.clone(),
         )
-        .set_debug_payloads(true);
+        .set_debug_payloads(std::env::var("DEBUG").is_ok());
 
         socket_io_client
             .register_subscriber(self.inner.clone())
