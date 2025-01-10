@@ -39,10 +39,14 @@ impl BrandSocketApiClient {
 
     pub async fn disconnect(&self) -> Result<(), String> {
         let _ = self.socket_io_client.lock().await.take();
-        
+
         Ok(())
     }
-    
+
+    pub async fn is_connected(&self) -> bool {
+        self.socket_io_client.lock().await.is_some() && self.inner.is_connected().await
+    }
+
     pub async fn connect(&self) -> Result<(), String> {
         my_web_socket_client::my_tls::install_default_crypto_providers();
         let socket_io_client = MySocketIoClient::new(
