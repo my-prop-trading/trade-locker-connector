@@ -49,7 +49,7 @@ impl BrandSocketApiInner {
             tokio::time::sleep(Duration::from_millis(250)).await;
 
             if instant.elapsed() > timeout {
-                return Err("Sync timeout".to_string());
+                return Err("Timeout".to_string());
             }
         }
     }
