@@ -16,7 +16,7 @@ pub trait BrandSocketApiConfig {
 
 pub struct BrandSocketApiClient {
     config_wrapper: Arc<BrandSocketApiConfigWrapper>,
-    socket_io_client: tokio::sync::Mutex<Option<MySocketIoClient>>,
+    socket_io_client: std::sync::Mutex<Option<MySocketIoClient>>,
     inner: Arc<BrandSocketApiInner>,
     logger: Arc<dyn Logger + Send + Sync + 'static>,
 }
@@ -38,13 +38,13 @@ impl BrandSocketApiClient {
     }
 
     pub async fn disconnect(&self) -> Result<(), String> {
-        let _ = self.socket_io_client.lock().await.take();
+        let _ = self.socket_io_client.lock().unwrap().take();
 
         Ok(())
     }
 
     pub async fn is_connected(&self) -> bool {
-        self.socket_io_client.lock().await.is_some() && self.inner.is_connected().await
+        self.socket_io_client.lock().unwrap().is_some() && self.inner.is_connected().await
     }
 
     pub async fn connect(&self) -> Result<(), String> {
@@ -61,7 +61,10 @@ impl BrandSocketApiClient {
             .register_subscriber(self.inner.clone())
             .await;
         socket_io_client.start();
-        self.socket_io_client.lock().await.replace(socket_io_client);
+        self.socket_io_client
+            .lock()
+            .unwrap()
+            .replace(socket_io_client);
 
         Ok(())
     }
