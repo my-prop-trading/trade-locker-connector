@@ -20,11 +20,13 @@ use reqwest::{RequestBuilder, Response};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::fmt::Debug;
+use std::time::Duration;
 
 #[async_trait::async_trait]
 pub trait BrandApiConfig {
     async fn get_api_url(&self) -> String;
     async fn get_api_key(&self) -> String;
+    async fn get_timeout(&self) -> Duration;
 }
 
 pub struct BrandApiClient<C: BrandApiConfig> {
@@ -46,7 +48,8 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         idempotency_key: Option<&str>,
     ) -> Result<CreateUserResponse, Error> {
         let endpoint = BrandApiEndpoint::CreateUser;
-        self.send_deserialized(endpoint, Some(request), idempotency_key).await
+        self.send_deserialized(endpoint, Some(request), idempotency_key)
+            .await
     }
 
     pub async fn check_email(
@@ -75,7 +78,8 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         idempotency_key: Option<&str>,
     ) -> Result<AccountModel, Error> {
         let endpoint = BrandApiEndpoint::CreateAccount;
-        self.send_deserialized(endpoint, Some(request), idempotency_key).await
+        self.send_deserialized(endpoint, Some(request), idempotency_key)
+            .await
     }
 
     pub async fn activate_account(
@@ -126,7 +130,8 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         idempotency_key: Option<&str>,
     ) -> Result<CreditAccountResponse, Error> {
         let endpoint = BrandApiEndpoint::CreditAccount;
-        self.send_deserialized(endpoint, Some(request), idempotency_key).await
+        self.send_deserialized(endpoint, Some(request), idempotency_key)
+            .await
     }
 
     pub async fn deposit_account(
@@ -135,7 +140,8 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         idempotency_key: Option<&str>,
     ) -> Result<AccountOperationResponse, Error> {
         let endpoint = BrandApiEndpoint::Deposit;
-        self.send_deserialized(endpoint, Some(request), idempotency_key).await
+        self.send_deserialized(endpoint, Some(request), idempotency_key)
+            .await
     }
 
     pub async fn withdraw_account(
@@ -144,7 +150,8 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         idempotency_key: Option<&str>,
     ) -> Result<AccountOperationResponse, Error> {
         let endpoint = BrandApiEndpoint::Withdraw;
-        self.send_deserialized(endpoint, Some(request), idempotency_key).await
+        self.send_deserialized(endpoint, Some(request), idempotency_key)
+            .await
     }
 
     pub async fn get_instruments(
@@ -240,13 +247,25 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         idempotency_key: Option<&str>,
     ) -> Result<String, Error> {
         let base_url = &self.config.get_api_url().await;
-        let (builder, url, request) = self.get_builder(base_url, endpoint, request, idempotency_key).await?;
+        let (builder, url, request) = self
+            .get_builder(base_url, endpoint, request, idempotency_key)
+            .await?;
 
         if std::env::var("DEBUG").is_ok() {
             println!("execute send: {url} {:?}", request);
         }
 
-        let response = builder.send().await;
+        let timeout = self.config.get_timeout().await;
+        let response = tokio::time::timeout(timeout, builder.send()).await;
+
+        let Ok(response) = response else {
+            let msg = format!(
+                "Failed {:?} {:?}: Timeout",
+                endpoint.get_http_method(),
+                endpoint
+            );
+            return Err(msg.into());
+        };
 
         handle_text(response?, &request, &url, endpoint.get_http_method()).await
     }
@@ -258,13 +277,25 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         idempotency_key: Option<&str>,
     ) -> Result<T, Error> {
         let base_url = &self.config.get_api_url().await;
-        let (builder, url, request) = self.get_builder(base_url, endpoint, request, idempotency_key).await?;
+        let (builder, url, request) = self
+            .get_builder(base_url, endpoint, request, idempotency_key)
+            .await?;
 
         if std::env::var("DEBUG").is_ok() {
             println!("execute send_deserialized: {url} {:?}", request);
         }
 
-        let response = builder.send().await;
+        let timeout = self.config.get_timeout().await;
+        let response = tokio::time::timeout(timeout, builder.send()).await;
+
+        let Ok(response) = response else {
+            let msg = format!(
+                "Failed {:?} {:?}: Timeout",
+                endpoint.get_http_method(),
+                endpoint
+            );
+            return Err(msg.into());
+        };
 
         handle_json(response?, request, &url, endpoint.get_http_method()).await
     }
@@ -313,7 +344,10 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         );
 
         if let Some(idempotency_key) = idempotency_key {
-            custom_headers.insert("Idempotency-Key", HeaderValue::from_str(idempotency_key).unwrap());
+            custom_headers.insert(
+                "Idempotency-Key",
+                HeaderValue::from_str(idempotency_key).unwrap(),
+            );
         }
 
         custom_headers

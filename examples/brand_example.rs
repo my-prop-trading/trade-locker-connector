@@ -2,6 +2,7 @@ use chrono::{DateTime, TimeDelta, Utc};
 use futures_util::future::join_all;
 use std::ops::Sub;
 use std::sync::Arc;
+use std::time::Duration;
 use tokio::sync::Semaphore;
 use tokio::time::Instant;
 use trade_locker_connector::brand::api_client::{BrandApiClient, BrandApiConfig};
@@ -409,6 +410,10 @@ impl BrandApiConfig for ExampleBrandApiConfig {
 
     async fn get_api_key(&self) -> String {
         self.api_key.clone()
+    }
+
+    async fn get_timeout(&self) -> Duration {
+        Duration::from_secs(15)
     }
 }
 
