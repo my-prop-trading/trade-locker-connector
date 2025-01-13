@@ -29,7 +29,7 @@ async fn main() {
     //is_api_alive(&brand_api).await;
     //get_api_status(&brand_api).await;
     //create_user(&brand_api).await;
-    create_account(&brand_api).await;
+    //create_account(&brand_api).await;
     //activate_account(&brand_api).await;
     //credit_account(&brand_api).await;
     //close_account_positions(&brand_api).await;
@@ -50,7 +50,7 @@ async fn main() {
     //deposit_account(&brand_api).await;
     //withdraw_account(&brand_api).await;
     //get_monthly_active_accounts(&brand_api).await;
-    //get_closed_trades_report(&brand_api).await;
+    get_closed_trades_report(&brand_api).await;
 
     println!("elapsed time: {:?}", instant.elapsed());
 }
@@ -61,12 +61,12 @@ pub fn get_user_id() -> String {
 }
 
 pub fn get_account_id() -> String {
-    //"L#705322".to_string()
+    "L#705322".to_string()
     //"L#705611".to_string()
     //"L#705618".to_string()
     //"L#705519".to_string()
     //"L#708261".to_string()
-    "D#847500".to_string()
+    //"D#847500".to_string()
 }
 
 pub fn get_password() -> String {
