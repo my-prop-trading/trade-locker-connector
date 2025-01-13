@@ -38,7 +38,12 @@ impl BrandSocketApiClient {
     }
 
     pub async fn disconnect(&self) -> Result<(), String> {
-        let _ = self.socket_io_client.lock().unwrap().take();
+        self.inner.disconnect().await;
+        let socket_io_client = self.socket_io_client.lock().unwrap().take();
+
+        if let Some(socket_io_client) = socket_io_client {
+            socket_io_client.stop();
+        }
 
         Ok(())
     }

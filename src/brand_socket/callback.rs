@@ -53,6 +53,14 @@ impl BrandSocketApiInner {
             }
         }
     }
+    
+    pub async fn disconnect(&self)  {
+        let connection = self.connection.write().await.take();
+        
+        if let Some(connection) = connection {
+            connection.disconnect().await;
+        }        
+    }
 }
 
 #[async_trait::async_trait]
