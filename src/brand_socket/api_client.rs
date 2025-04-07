@@ -103,10 +103,6 @@ impl SocketIoClientSettings for BrandSocketApiConfigWrapper {
         self.socket_io_conf.handshake_path.to_string()
     }
 
-    async fn get_namespace(&self, _client_name: &str) -> String {
-        self.socket_io_conf.namespace.to_string()
-    }
-
     async fn get_headers(&self, _client_name: &str) -> Vec<(String, String)> {
         vec![(
             self.socket_io_conf.api_key_header_name.to_string(),
