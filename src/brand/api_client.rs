@@ -397,7 +397,7 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
             self.build_full_url(&base_url, endpoint, None)
         };
 
-        let flurl = self.add_headers(FlUrl::new(&url), idempotency_key).await;
+        let flurl = self.add_headers(FlUrl::new(&url).set_timeout(Duration::from_secs(180)), idempotency_key).await;
 
         Ok((flurl, url))
     }
