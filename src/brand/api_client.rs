@@ -321,7 +321,8 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
 
         let Ok(body) = result else {
             let msg = format!(
-                "Failed to deserialize. Url: {:?} {:?}. Request: {:?}. Body: {}",
+                "Failed to deserialize. Err: {:?} Url: {:?} {:?}. Request: {:?}. Body: {}",
+                result.unwrap_err(),
                 endpoint.get_http_method(),
                 String::from(endpoint),
                 request,
