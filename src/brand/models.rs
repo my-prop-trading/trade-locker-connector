@@ -353,7 +353,7 @@ pub struct ClosedTradeReportModel {
     pub sl_price: Option<String>,
 
     #[serde(rename = "slOrderType")]
-    pub sl_order_type: Option<SlOrderType>,
+    pub sl_order_type: Option<String>, //SlOrderType
     #[serde(rename = "slTrailingOffset")]
     pub sl_trailing_offset: Option<String>,
     #[serde(rename = "tpPrice")]
