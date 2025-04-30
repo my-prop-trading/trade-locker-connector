@@ -126,8 +126,8 @@ impl SocketIoClientSettings for BrandSocketApiConfigWrapper {
 
 #[async_trait::async_trait]
 impl WsClientSettings for BrandSocketApiConfigWrapper {
-    async fn get_url(&self, _client_name: &str) -> String {
-        self.config.get_server_url().await
+    async fn get_url(&self, _client_name: &str) -> Option<String> {
+        Some(self.config.get_server_url().await)
     }
 }
 
