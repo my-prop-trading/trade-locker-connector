@@ -39,6 +39,10 @@ async fn main() {
             continue;
         }
         
+        if !brand_api.is_connected().await {
+            panic!("brand_api is not connected");
+        }
+        
         println!("===========================");
         println!("SYNC ENDED");
         println!("===========================");

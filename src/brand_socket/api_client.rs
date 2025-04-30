@@ -54,13 +54,19 @@ impl BrandSocketApiClient {
 
     pub async fn connect(&self) -> Result<(), String> {
         my_web_socket_client::my_tls::install_default_crypto_providers();
+        let is_debug = std::env::var("DEBUG").is_ok();
+        
+        if is_debug {
+            println!("BrandSocketApiClient: Debug payloads are enabled");
+        }
+        
         let socket_io_client = MySocketIoClient::new(
             "trade-locker-brand-socket",
             self.config_wrapper.clone(),
             self.inner.clone(),
             self.logger.clone(),
         )
-        .set_debug_payloads(std::env::var("DEBUG").is_ok());
+        .set_debug_payloads(is_debug);
 
         socket_io_client
             .register_subscriber(self.inner.clone())
