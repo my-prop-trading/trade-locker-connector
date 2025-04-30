@@ -178,7 +178,7 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         &self,
         request: &GetClosedTradesReportRequest,
     ) -> Result<GetClosedTradesReportResponse, Error> {
-        let endpoint = BrandApiEndpoint::GetClosedTradesReport;
+        let endpoint = BrandApiEndpoint::GetClosedTradesHistoryReport;
         self.send_deserialized(endpoint, Some(request), None).await
     }
 
@@ -213,7 +213,7 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         &self,
         request: &GetTradesReportRequest,
     ) -> Result<GetTradesReportResponse, Error> {
-        let endpoint = BrandApiEndpoint::GetTradesReport;
+        let endpoint = BrandApiEndpoint::GetTradesHistoryReport;
         self.send_deserialized(endpoint, Some(request), None).await
     }
 

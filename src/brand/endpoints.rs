@@ -15,12 +15,12 @@ pub enum BrandApiEndpoint {
     CreditAccount,
     GetInstruments,
     GetOpenedPositions,
-    GetClosedTradesReport,
+    GetClosedTradesHistoryReport,
     GetGroups,
     GetAccountsReport,
     GetApiStatus,
     IsApiAlive,
-    GetTradesReport,
+    GetTradesHistoryReport,
     GetAssets,
     GetOrders,
     CancelOrder,
@@ -74,11 +74,8 @@ impl From<&BrandApiEndpoint> for String {
             BrandApiEndpoint::GetOpenedPositions => {
                 format!("/{api_name}/{}/positions/get-open-positions", api_version)
             }
-            BrandApiEndpoint::GetClosedTradesReport => {
-                format!(
-                    "/{api_name}/{}/reports/close-trades-history-report",
-                    api_version
-                )
+            BrandApiEndpoint::GetClosedTradesHistoryReport => {
+                format!("/{api_name}/v2/reports/close-trades-history-report",)
             }
             BrandApiEndpoint::GetGroups => {
                 format!("/{api_name}/{api_version}/groups/all")
@@ -92,8 +89,8 @@ impl From<&BrandApiEndpoint> for String {
             BrandApiEndpoint::IsApiAlive => {
                 format!("/{api_name}/alive")
             }
-            BrandApiEndpoint::GetTradesReport => {
-                format!("/{api_name}/{api_version}/reports/trades-history-report")
+            BrandApiEndpoint::GetTradesHistoryReport => {
+                format!("/{api_name}/v2/reports/trades-history-report")
             }
             BrandApiEndpoint::GetAssets => {
                 format!("/{api_name}/{api_version}/brand/assets")
@@ -133,12 +130,12 @@ impl BrandApiEndpoint {
             BrandApiEndpoint::CreditAccount => Method::POST,
             BrandApiEndpoint::GetInstruments => Method::POST,
             BrandApiEndpoint::GetOpenedPositions => Method::POST,
-            BrandApiEndpoint::GetClosedTradesReport => Method::POST,
+            BrandApiEndpoint::GetClosedTradesHistoryReport => Method::POST,
             BrandApiEndpoint::GetGroups => Method::POST,
             BrandApiEndpoint::GetAccountsReport => Method::POST,
             BrandApiEndpoint::GetApiStatus => Method::GET,
             BrandApiEndpoint::IsApiAlive => Method::GET,
-            BrandApiEndpoint::GetTradesReport => Method::POST,
+            BrandApiEndpoint::GetTradesHistoryReport => Method::POST,
             BrandApiEndpoint::GetAssets => Method::POST,
             BrandApiEndpoint::GetOrders => Method::POST,
             BrandApiEndpoint::CancelOrder => Method::POST,

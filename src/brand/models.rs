@@ -279,19 +279,22 @@ pub struct GetOpenedPositionsResponse {
     pub data: Vec<OpenedPositionModel>,
 }
 
+/// The range between startDateTime and endDateTime can be a maximum of 31 days. The data are sorted by closeDateTime ascending.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct GetClosedTradesReportRequest {
-    #[serde(rename = "accountId")]
-    pub account_id: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "accountIds")]
+    pub account_ids: Option<Vec<String>>,
     #[serde(rename = "type")]
     pub account_type: AccountType,
-    /// Cursor to fetch the next page of events. If not provided, the first page of events will be returned.
-    /// Must be an integer string, greater than or equal to 0 and less than or equal to 9223372036854775807
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub cursor: Option<String>,
-    /// Page size; max 1000, default 20.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub limit: Option<String>,
+    /// Start time in ISO format. 2021-12-31T23:59:59.999Z.
+    /// Must be before end date.
+    #[serde(rename = "startDateTime")]
+    pub start_date_time: String,
+    /// End time in ISO format. 2021-12-31T23:59:59.999Z
+    /// Must be after start date.
+    #[serde(rename = "endDateTime")]
+    pub end_date_time: String,
 }
 
 pub fn get_default_cursor() -> String {
@@ -363,6 +366,12 @@ pub struct ClosedTradeReportModel {
     pub profit: String,
     #[serde(rename = "netProfit")]
     pub net_profit: String,
+    #[serde(rename = "lotSize")]
+    pub lot_size: String,
+    #[serde(rename = "accountId")]
+    pub account_id: String,
+    #[serde(rename = "userGroupId")]
+    pub user_group_id: String,
 }
 
 /// Represents pagination links with associated parameters.
@@ -491,8 +500,8 @@ pub enum OpenedPositionSide {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GetClosedTradesReportResponse {
     pub data: Vec<ClosedTradeReportModel>,
-    /// Links to the next page of the report. Use params for the next page URL search params.
-    pub links: PageLinks,
+    // Links to the next page of the report. Use params for the next page URL search params.
+    // pub links: PageLinks, seems to be removed on v2
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -556,16 +565,15 @@ pub struct GetTradesReportRequest {
     pub account_type: AccountType,
     #[serde(rename = "accountId")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub account_id: Option<String>,
+    pub account_ids: Option<Vec<String>>,
     /// Start time in ISO format. 2021-12-31T23:59:59.999Z
     #[serde(rename = "startDateTime")]
-    pub start_date_time: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub start_date_time: Option<String>,
     /// End time in ISO format. 2021-12-31T23:59:59.999Z
     #[serde(rename = "endDateTime")]
-    pub end_date_time: String,
-    #[serde(rename = "enableSLTP")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub enable_sl_tp: Option<bool>,
+    pub end_date_time: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -626,6 +634,10 @@ pub struct TradeReportModel {
 
     #[serde(rename = "takeProfit")]
     pub take_profit: Option<String>,
+    #[serde(rename = "swap")]
+    pub swap: Option<String>,
+    #[serde(rename = "netPnl")]
+    pub net_pnl: String,
 }
 
 // Enums for trade sides, order types, and position status

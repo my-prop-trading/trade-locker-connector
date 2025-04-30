@@ -1,6 +1,6 @@
 use chrono::{DateTime, TimeDelta, Utc};
 use futures_util::future::join_all;
-use std::ops::Sub;
+use std::ops::{Sub};
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::Semaphore;
@@ -43,14 +43,14 @@ async fn main() {
     //suspend_account(&brand_api).await;
     //get_accounts_report(&brand_api).await;
     //set_user_password(&brand_api).await
-    //get_trades_report(&brand_api).await;
     //get_assets(&brand_api).await;
     //cancel_order(&brand_api).await;
     //get_orders(&brand_api).await;
     //deposit_account(&brand_api).await;
     //withdraw_account(&brand_api).await;
     //get_monthly_active_accounts(&brand_api).await;
-    get_closed_trades_report(&brand_api).await;
+    get_trades_report(&brand_api).await;
+    //get_closed_trades_report(&brand_api).await;
 
     println!("elapsed time: {:?}", instant.elapsed());
 }
@@ -177,10 +177,10 @@ pub async fn get_monthly_active_accounts(rest_client: &BrandApiClient<ExampleBra
 pub async fn get_closed_trades_report(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_closed_trades_report(&GetClosedTradesReportRequest {
-            account_id: get_account_id(),
+            account_ids: None,
             account_type: get_account_type(),
-            cursor: None,
-            limit: Some(1000.to_string()),
+            start_date_time: Utc::now().sub(TimeDelta::days(30)).to_rfc3339(),
+            end_date_time: Utc::now().to_rfc3339(),
         })
         .await;
 
@@ -201,19 +201,6 @@ pub async fn get_account(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let resp = rest_client
         .get_account(&GetAccountRequest {
             account_id: get_account_id(),
-        })
-        .await;
-
-    println!("{:?}", resp)
-}
-
-pub async fn get_closed_positions(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
-    let resp = rest_client
-        .get_closed_trades_report(&GetClosedTradesReportRequest {
-            account_id: get_account_id(),
-            account_type: get_account_type(),
-            cursor: None,
-            limit: None,
         })
         .await;
 
@@ -328,10 +315,9 @@ pub async fn get_trades_report(rest_client: &BrandApiClient<ExampleBrandApiConfi
     let now = Utc::now();
     let request = GetTradesReportRequest {
         account_type: AccountType::Live,
-        account_id: None,
-        start_date_time: date_to_string(now.sub(TimeDelta::minutes(1))),
-        end_date_time: date_to_string(now),
-        enable_sl_tp: Some(false),
+        account_ids: None,
+        start_date_time: Some(date_to_string(now.sub(TimeDelta::days(10)))),
+        end_date_time: Some(date_to_string(now)),
     };
     println!("==========");
     println!("{:?} sending {:?}", Utc::now(), request);
