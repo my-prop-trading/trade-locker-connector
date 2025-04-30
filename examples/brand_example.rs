@@ -49,8 +49,8 @@ async fn main() {
     //deposit_account(&brand_api).await;
     //withdraw_account(&brand_api).await;
     //get_monthly_active_accounts(&brand_api).await;
-    get_trades_report(&brand_api).await;
-    //get_closed_trades_report(&brand_api).await;
+    //get_trades_report(&brand_api).await;
+    get_closed_trades_report(&brand_api).await;
 
     println!("elapsed time: {:?}", instant.elapsed());
 }

@@ -314,7 +314,7 @@ pub struct ClosedTradeReportModel {
     #[serde(rename = "orderType")]
     pub order_type: String,
 
-    #[serde(rename = "positionSide")]
+    #[serde(rename = "side")]
     pub position_side: ClosedPositionSide,
 
     #[serde(rename = "closeAmount")]
@@ -473,11 +473,11 @@ pub enum PositionOrderType {
 
 #[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
 pub enum ClosedPositionSide {
-    #[strum(to_string = "Buy")]
-    #[serde(rename = "Buy")]
+    #[strum(to_string = "BUY")]
+    #[serde(rename = "BUY")]
     Buy,
-    #[strum(to_string = "Sell")]
-    #[serde(rename = "Sell")]
+    #[strum(to_string = "SELL")]
+    #[serde(rename = "SELL")]
     Sell,
 }
 
