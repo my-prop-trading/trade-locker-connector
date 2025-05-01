@@ -79,7 +79,12 @@ impl BrandSocketApiInner {
 #[async_trait::async_trait]
 impl SocketIoCallbacks for BrandSocketApiInner {
     async fn on_connect(&self, connection: Arc<SocketIoConnection>) {
-        _ = self.connection.write().await.replace(connection);
+        let prev_connection = self.connection.write().await.replace(connection);
+
+        if let Some(prev_connection) = prev_connection {
+            prev_connection.disconnect().await;
+        }
+
         self.handler.on_connected().await;
     }
 
