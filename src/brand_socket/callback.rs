@@ -1,8 +1,9 @@
 use super::models::*;
 use my_socket_io_client::{SocketIoCallbacks, SocketIoConnection, SocketIoEventSubscriberCallback};
+use rust_extensions::date_time::DateTimeAsMicroseconds;
 use rust_extensions::Logger;
-use std::sync::atomic::AtomicBool;
 use std::sync::atomic::Ordering::Relaxed;
+use std::sync::atomic::{AtomicBool, AtomicI64};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tokio::sync::RwLock;
@@ -19,6 +20,7 @@ pub struct BrandSocketApiInner {
     connection: RwLock<Option<Arc<SocketIoConnection>>>,
     logger: Arc<dyn Logger + Send + Sync + 'static>,
     sync_ended: AtomicBool,
+    last_event_timestamp: AtomicI64,
 }
 
 impl BrandSocketApiInner {
@@ -31,6 +33,7 @@ impl BrandSocketApiInner {
             connection: Default::default(),
             logger,
             sync_ended: AtomicBool::new(false),
+            last_event_timestamp: Default::default(),
         }
     }
 
@@ -53,13 +56,23 @@ impl BrandSocketApiInner {
             }
         }
     }
-    
-    pub async fn disconnect(&self)  {
+
+    pub async fn disconnect(&self) {
         let connection = self.connection.write().await.take();
-        
+
         if let Some(connection) = connection {
             connection.disconnect().await;
-        }        
+        }
+    }
+
+    pub fn get_last_event_timestamp(&self) -> Option<DateTimeAsMicroseconds> {
+        let last_event_timestamp = self.last_event_timestamp.load(Relaxed);
+
+        if last_event_timestamp <= 0 {
+            None
+        } else {
+            Some(DateTimeAsMicroseconds::from(last_event_timestamp))
+        }
     }
 }
 
@@ -83,6 +96,9 @@ impl SocketIoCallbacks for BrandSocketApiInner {
 #[async_trait::async_trait]
 impl SocketIoEventSubscriberCallback<BrandSocketEventDeserialized, ()> for BrandSocketApiInner {
     async fn on_event(&self, event: BrandSocketEventDeserialized) -> () {
+        self.last_event_timestamp
+            .store(DateTimeAsMicroseconds::now().unix_microseconds, Relaxed);
+
         match event.result {
             Ok(event) => {
                 match &event {

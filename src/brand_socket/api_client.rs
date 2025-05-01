@@ -3,6 +3,7 @@ use crate::models::AccountType;
 use my_socket_io_client::{
     my_web_socket_client, MySocketIoClient, SocketIoClientSettings, WsClientSettings,
 };
+use rust_extensions::date_time::DateTimeAsMicroseconds;
 use rust_extensions::Logger;
 use std::sync::Arc;
 use std::time::Duration;
@@ -55,11 +56,11 @@ impl BrandSocketApiClient {
     pub async fn connect(&self) -> Result<(), String> {
         my_web_socket_client::my_tls::install_default_crypto_providers();
         let is_debug = std::env::var("DEBUG").is_ok();
-        
+
         if is_debug {
             println!("BrandSocketApiClient: Debug payloads are enabled");
         }
-        
+
         let socket_io_client = MySocketIoClient::new(
             "trade-locker-brand-socket",
             self.config_wrapper.clone(),
@@ -82,6 +83,10 @@ impl BrandSocketApiClient {
 
     pub async fn wait_until_sync_ended(&self, timeout: Duration) -> Result<(), String> {
         self.inner.wait_until_sync_ended(timeout).await
+    }
+
+    pub fn get_last_event_timestamp(&self) -> Option<DateTimeAsMicroseconds> {
+        self.inner.get_last_event_timestamp()
     }
 }
 
@@ -133,7 +138,6 @@ impl WsClientSettings for BrandSocketApiConfigWrapper {
 
 #[derive(Clone, Debug)]
 struct SocketIoConfig {
-    pub namespace: &'static str,
     pub handshake_path: &'static str,
     //pub transport: &'static str,
     pub api_key_header_name: &'static str,
@@ -143,7 +147,6 @@ struct SocketIoConfig {
 impl Default for SocketIoConfig {
     fn default() -> Self {
         Self {
-            namespace: "/brand-socket",
             handshake_path: "/brand-socket/socket.io",
             //transport: "websocket",
             api_key_header_name: "brand-api-key",
