@@ -81,14 +81,12 @@ impl SocketIoCallbacks for BrandSocketApiInner {
     async fn on_connect(&self, connection: Arc<SocketIoConnection>) {
         let mut current_connection = self.connection.write().await;
         *current_connection = Some(connection.clone());
-        drop(current_connection);
         self.handler.on_connected().await;
     }
 
     async fn on_disconnect(&self, _connection: Arc<SocketIoConnection>) {
         let mut current_connection = self.connection.write().await;
         *current_connection = None;
-        drop(current_connection);
         self.handler.on_disconnected().await;
     }
 }
