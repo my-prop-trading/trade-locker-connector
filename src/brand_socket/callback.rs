@@ -52,7 +52,7 @@ impl BrandSocketApiInner {
             tokio::time::sleep(Duration::from_millis(250)).await;
 
             if instant.elapsed() > timeout {
-                return Err("Timeout".to_string());
+                return Err(format!("Timeout {:?}", timeout));
             }
         }
     }
