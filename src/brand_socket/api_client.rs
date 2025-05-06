@@ -147,7 +147,7 @@ struct SocketIoConfig {
 impl Default for SocketIoConfig {
     fn default() -> Self {
         Self {
-            handshake_path: "/brand-socket/socket.io",
+            handshake_path: "/brand-api/socket.io",
             //transport: "websocket",
             api_key_header_name: "brand-api-key",
             query_param_type_name: "type",

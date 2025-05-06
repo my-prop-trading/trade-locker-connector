@@ -11,8 +11,8 @@ use trade_locker_connector::models::AccountType;
 async fn main() {
     let api_key = std::env::var("TRADE_LOCKER_API_KEY").unwrap();
     let config = Arc::new(ExampleBrandSocketApiConfig {
-        server_url: "wss://api-dev.tradelocker.com/brand-api/socket.io/".to_string(),
-        //server_url: "wss://api.tradelocker.com/brand-api/socket.io/".to_string(),
+        server_url: "wss://api-dev.tradelocker.com".to_string(),
+        //server_url: "wss://api.tradelocker.com".to_string(),
         api_key,
     });
     let handler = Arc::new(ExampleBrandSocketApiEventHandler);
