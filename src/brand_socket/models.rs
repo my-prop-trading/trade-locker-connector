@@ -27,6 +27,7 @@ pub enum BrandSocketEvent {
 }
 
 pub struct BrandSocketEventDeserialized {
+    pub payload: String,
     pub result: Result<BrandSocketEvent, BrandSocketEventDeserializeErr>,
 }
 
@@ -86,7 +87,10 @@ impl SocketIoSubscribeEventModel for BrandSocketEventDeserialized {
             ))),
         };
 
-        BrandSocketEventDeserialized { result }
+        BrandSocketEventDeserialized {
+            result,
+            payload: payload.to_string(),
+        }
     }
 }
 

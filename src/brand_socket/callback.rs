@@ -125,7 +125,7 @@ impl SocketIoEventSubscriberCallback<BrandSocketEventDeserialized, ()> for Brand
                 ),
                 BrandSocketEventDeserializeErr::Serde(err) => self.logger.write_error(
                     "BrandSocketApiInner.on_event".to_string(),
-                    format!("Failed to deserialize: {}", err),
+                    format!("Failed to deserialize: {}. Payload: {}", err, event.payload),
                     None,
                 ),
             },
