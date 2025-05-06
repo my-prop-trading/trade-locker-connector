@@ -224,7 +224,7 @@ pub struct OpenOrderMessage {
     pub side: String,
     pub price: Option<String>,
     /// Allowed values: "PENDING""EXECUTED""CANCELLED
-    pub status: String,
+    pub status: Option<String>,
 }
 
 impl OpenOrderMessage {
