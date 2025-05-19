@@ -451,17 +451,17 @@ async fn handle_flurl_text(
         StatusCode::OK | StatusCode::CREATED | StatusCode::NO_CONTENT => Ok(body_str),
         StatusCode::INTERNAL_SERVER_ERROR => {
             bail!(format!(
-                "Internal Server Error. Url: {request_method:?} {request_url}"
+                "Internal Server Error. Url: {request_method:?} {request_url}. Request: {:?}. Response: {}", request_json, body_str,
             ));
         }
         StatusCode::SERVICE_UNAVAILABLE => {
             bail!(format!(
-                "Service Unavailable. Url: {request_method:?} {request_url}"
+                "Service Unavailable. Url: {request_method:?} {request_url}. Request: {:?}. Response: {}", request_json, body_str
             ));
         }
         StatusCode::UNAUTHORIZED | StatusCode::FORBIDDEN => {
             bail!(format!(
-                "Unauthorized or forbidden. Url: {request_method:?} {request_url}"
+                "Unauthorized or forbidden. Url: {request_method:?} {request_url}. Request: {:?}. Response: {}", request_json, body_str
             ));
         }
         StatusCode::BAD_REQUEST => {
