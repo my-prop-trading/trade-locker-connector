@@ -1,7 +1,7 @@
+use crate::models::AccountType;
 use chrono::{DateTime, Utc};
 use serde::Serialize;
 use serde_derive::Deserialize;
-use crate::models::AccountType;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CreateUserRequest {
@@ -274,6 +274,24 @@ pub struct OpenedPositionModel {
     pub instrument: String,
 }
 
+impl OpenedPositionModel {
+    pub fn calc_current_price(&self) -> f64 {
+        let pnl = self.pnl.parse::<f64>().unwrap_or_default();
+        let lots = self.lots.parse::<f64>().unwrap_or_default();
+        let lot_size = self.lot_size.parse::<f64>().unwrap_or_default();
+        let entry_price = self.open_price.parse::<f64>().unwrap_or_default();
+
+        match self.side {
+            OpenedPositionSide::Buy | OpenedPositionSide::BuyToConvert => {
+                (pnl / (lots * lot_size)) + entry_price
+            }
+            OpenedPositionSide::Sell | OpenedPositionSide::ShortSell => {
+                entry_price - (pnl / (lots * lot_size))
+            }
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct GetOpenedPositionsResponse {
     pub data: Vec<OpenedPositionModel>,
@@ -481,7 +499,7 @@ pub enum ClosedPositionSide {
     Sell,
 }
 
-#[derive(strum::Display, Debug, Clone, Serialize, Deserialize)]
+#[derive(strum::Display, Debug, Clone, Serialize, Deserialize, Eq, PartialEq, Copy)]
 pub enum OpenedPositionSide {
     #[strum(to_string = "BUY")]
     #[serde(rename = "BUY")]
@@ -729,7 +747,7 @@ pub struct GetOrdersRequest {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GetOrdersResponse {
-    pub data: Vec<OrderModel>
+    pub data: Vec<OrderModel>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
