@@ -34,7 +34,7 @@ async fn main() {
     //credit_account(&brand_api).await;
     //close_account_positions(&brand_api).await;
     //get_account(&brand_api).await;
-    //get_opened_positions(&brand_api).await;
+    get_opened_positions(&brand_api).await;
     //get_closed_positions(&brand_api).await;
     //check_email(&brand_api).await;
     //get_groups(&brand_api).await;

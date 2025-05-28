@@ -272,24 +272,12 @@ pub struct OpenedPositionModel {
 
     #[serde(rename = "instrument")]
     pub instrument: String,
-}
 
-impl OpenedPositionModel {
-    pub fn calc_current_price(&self) -> f64 {
-        let pnl = self.pnl.parse::<f64>().unwrap_or_default();
-        let lots = self.lots.parse::<f64>().unwrap_or_default();
-        let lot_size = self.lot_size.parse::<f64>().unwrap_or_default();
-        let entry_price = self.open_price.parse::<f64>().unwrap_or_default();
+    #[serde(rename = "currentPrice")]
+    pub current_price: String,
 
-        match self.side {
-            OpenedPositionSide::Buy | OpenedPositionSide::BuyToConvert => {
-                (pnl / (lots * lot_size)) + entry_price
-            }
-            OpenedPositionSide::Sell | OpenedPositionSide::ShortSell => {
-                entry_price - (pnl / (lots * lot_size))
-            }
-        }
-    }
+    #[serde(rename = "commission")]
+    pub commission: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
