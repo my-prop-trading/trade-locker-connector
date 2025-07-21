@@ -161,7 +161,7 @@ pub struct PositionMessage {
     #[serde(rename = "openDateTime")]
     pub open_date_time: DateTime<Utc>,
     #[serde(rename = "openOrderId")]
-    pub open_order_id: String,
+    pub open_order_id: Option<String>, // it is required by the docs but do not sending
     #[serde(rename = "stopLossOrderId")]
     pub stop_loss_order_id: Option<String>,
     #[serde(rename = "stopLossLimit")]
