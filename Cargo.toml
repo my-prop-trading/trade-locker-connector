@@ -1,6 +1,6 @@
 [package]
 name = "trade-locker-connector"
-version = "0.6.10"
+version = "0.6.12"
 edition = "2021"
 authors = ["gorin <mxmgorin@gmail.com>"]
 
@@ -9,7 +9,7 @@ authors = ["gorin <mxmgorin@gmail.com>"]
 #my-socket-io-client = { path = "my-socket-io-client" }
 my-socket-io-client = { git = "https://github.com/MyJetTools/my-socket-io-client.git", tag = "0.1.2" }
 rust-extensions = { tag = "0.1.5", git = "https://github.com/MyJetTools/rust-extensions.git" }
-flurl = { tag = "0.6.1", git = "https://github.com/MyJetTools/fl-url.git" }
+flurl = { git = "https://github.com/MyJetTools/fl-url.git", rev = "d835b8c287302952550b604aeb1f122ac6e3a63b" }
 
 http = "*"
 serde = { version = "*", features = ["derive"] }
