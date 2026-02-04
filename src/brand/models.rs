@@ -964,6 +964,7 @@ pub struct GetClosedPositionsReportResponse {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all="camelCase")]
 pub struct ClosedPositionModel {
     pub instrument: String,
     pub lot_size: String,
