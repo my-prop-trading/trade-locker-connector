@@ -339,7 +339,7 @@ pub async fn load_test(rest_client: &BrandApiClient<ExampleBrandApiConfig>) {
     let delay = core::time::Duration::from_secs(1);
     let semaphore = Arc::new(Semaphore::new(max_parallel_requests));
 
-    let futures = (0..num_requests).map(|i| {
+    let futures = (0..num_requests).map(|_i| {
         let semaphore = Arc::clone(&semaphore);
 
         async move {

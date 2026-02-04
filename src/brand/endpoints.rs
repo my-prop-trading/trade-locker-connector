@@ -27,6 +27,7 @@ pub enum BrandApiEndpoint {
     Deposit,
     Withdraw,
     MonthlyActiveAccounts,
+    GetClosedPositionsHistoryReport,
 }
 
 impl From<&BrandApiEndpoint> for String {
@@ -110,6 +111,9 @@ impl From<&BrandApiEndpoint> for String {
             BrandApiEndpoint::MonthlyActiveAccounts => {
                 format!("/{api_name}/{api_version}/brand/monthly-active-accounts")
             }
+            BrandApiEndpoint::GetClosedPositionsHistoryReport => {
+                format!("/{api_name}/{api_version}/reports/closed-positions-history-report")
+            }
         }
     }
 }
@@ -142,6 +146,7 @@ impl BrandApiEndpoint {
             BrandApiEndpoint::Deposit => Method::POST,
             BrandApiEndpoint::Withdraw => Method::POST,
             BrandApiEndpoint::MonthlyActiveAccounts => Method::POST,
+            BrandApiEndpoint::GetClosedPositionsHistoryReport => Method::POST,
         }
     }
 }

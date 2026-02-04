@@ -939,3 +939,60 @@ pub struct MonthlyActiveAccountModel {
     pub open_positions: i32,
     pub orders: i32,
 }
+
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct GetClosedPositionsReportRequest {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "accountIds")]
+    pub account_ids: Option<Vec<String>>,
+    #[serde(rename = "type")]
+    pub account_type: AccountType,
+    /// Start time in ISO format. 2021-12-31T23:59:59.999Z.
+    /// Must be before end date.
+    #[serde(rename = "startDateTime")]
+    pub start_date_time: String,
+    /// End time in ISO format. 2021-12-31T23:59:59.999Z
+    /// Must be after start date.
+    #[serde(rename = "endDateTime")]
+    pub end_date_time: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GetClosedPositionsReportResponse {
+    pub data: Vec<ClosedPositionModel>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ClosedPositionModel {
+    pub instrument: String,
+    pub lot_size: String,
+    pub account_id: String,
+    pub close_trade_id: String,
+    pub position_id: String,
+    pub close_order_id: String,
+    pub open_order_id: String,
+    pub duration_sec: String,
+
+    pub open_date_time: String,
+    pub close_date_time: String,
+
+    pub profit: String,
+    pub net_profit: String,
+    pub commission: String,
+    pub swap: String,
+    pub amount: String,
+
+    pub open_price: String,
+    pub close_price: String,
+    pub sl_price: Option<String>,
+    pub tp_price: Option<String>,
+
+    pub side: ClosedPositionSide,
+    pub currency: String,
+
+    pub open_trade_cross_price: String,
+    pub close_trade_cross_price: String,
+
+    pub user_group_id: String,
+}

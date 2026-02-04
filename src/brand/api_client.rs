@@ -2,16 +2,7 @@ use crate::brand::endpoints::BrandApiEndpoint;
 use crate::brand::errors::Error;
 use crate::brand::models::CreateUserRequest;
 use crate::brand::{
-    AccountModel, AccountOperationRequest, AccountOperationResponse, CancelOrderRequest,
-    CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest,
-    CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest,
-    CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse,
-    GetApiStatusResponse, GetAssetsRequest, GetAssetsResponse, GetClosedTradesReportRequest,
-    GetClosedTradesReportResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest,
-    GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse,
-    GetOrdersRequest, GetOrdersResponse, GetTradesReportRequest, GetTradesReportResponse,
-    MonthlyActiveAccountsRequest, MonthlyActiveAccountsResponse, SetAccountGroupRequest,
-    SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse,
+    AccountModel, AccountOperationRequest, AccountOperationResponse, CancelOrderRequest, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest, CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest, CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse, GetApiStatusResponse, GetAssetsRequest, GetAssetsResponse, GetClosedPositionsReportRequest, GetClosedPositionsReportResponse, GetClosedTradesReportRequest, GetClosedTradesReportResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest, GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse, GetOrdersRequest, GetOrdersResponse, GetTradesReportRequest, GetTradesReportResponse, MonthlyActiveAccountsRequest, MonthlyActiveAccountsResponse, SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse
 };
 use error_chain::bail;
 use flurl::{FlUrl, FlUrlResponse};
@@ -237,6 +228,13 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         self.send_deserialized(endpoint, Some(request), None).await
     }
 
+    pub async fn get_closed_positions_report(
+        &self,
+        request: &GetClosedPositionsReportRequest,
+    ) -> Result<GetClosedPositionsReportResponse, Error> {
+        let endpoint = BrandApiEndpoint::GetClosedPositionsHistoryReport;
+        self.send_deserialized(endpoint, Some(request), None).await
+    }
     async fn send<R: Serialize + Debug>(
         &self,
         endpoint: BrandApiEndpoint,
