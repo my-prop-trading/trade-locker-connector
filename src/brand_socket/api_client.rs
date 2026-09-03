@@ -1,8 +1,6 @@
 use crate::brand_socket::callback::{BrandSocketApiEventHandler, BrandSocketApiInner};
 use crate::models::AccountType;
-use my_socket_io_client::{
-    my_web_socket_client, MySocketIoClient, SocketIoClientSettings, WsClientSettings,
-};
+use my_socket_io_client::{MySocketIoClient, SocketIoClientSettings, WsClientSettings};
 use rust_extensions::date_time::DateTimeAsMicroseconds;
 use rust_extensions::Logger;
 use std::sync::Arc;
@@ -54,7 +52,7 @@ impl BrandSocketApiClient {
     }
 
     pub async fn connect(&self) -> Result<(), String> {
-        my_web_socket_client::my_tls::install_default_crypto_providers();
+        my_tls::install_default_crypto_providers();
         let is_debug = std::env::var("DEBUG").is_ok();
 
         if is_debug {
