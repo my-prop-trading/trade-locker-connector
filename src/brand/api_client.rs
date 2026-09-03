@@ -5,6 +5,7 @@ use crate::brand::{
     AccountModel, AccountOperationRequest, AccountOperationResponse, CancelOrderRequest, CheckEmailRequest, CheckEmailResponse, CloseAccountPositionsRequest, CloseAccountPositionsResponse, CreateAccountRequest, CreateUserResponse, CreditAccountRequest, CreditAccountResponse, GetAccountRequest, GetAccountsReportRequest, GetAccountsReportResponse, GetApiStatusResponse, GetAssetsRequest, GetAssetsResponse, GetClosedPositionsReportRequest, GetClosedPositionsReportResponse, GetClosedTradesReportRequest, GetClosedTradesReportResponse, GetGroupsRequest, GetGroupsResponse, GetInstrumentsRequest, GetInstrumentsResponse, GetOpenedPositionsRequest, GetOpenedPositionsResponse, GetOrdersRequest, GetOrdersResponse, GetTradesReportRequest, GetTradesReportResponse, MonthlyActiveAccountsRequest, MonthlyActiveAccountsResponse, SetAccountGroupRequest, SetUserPasswordRequest, UpdateAccountStatusRequest, UpdateAccountStatusResponse
 };
 use error_chain::bail;
+use flurl::body::FlUrlBody;
 use flurl::{FlUrl, FlUrlResponse};
 use http::{Method, StatusCode};
 use serde::de::DeserializeOwned;
@@ -345,10 +346,11 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
             request_json = Some(body.clone());
         }
 
-        let request_bytes: Option<Vec<u8>> = if let Some(request) = request {
-            Some(serde_json::to_string(request)?.into_bytes())
+        // flurl 0.6.1 takes `impl Into<FlUrlBody>` instead of `Option<Vec<u8>>`.
+        let body = if let Some(request) = request {
+            FlUrlBody::from_raw_data(serde_json::to_string(request)?.into_bytes(), None)
         } else {
-            None
+            FlUrlBody::empty()
         };
         let (flurl, url) = self.build_flurl(endpoint, request, idempotency_key).await?;
         let http_method = endpoint.get_http_method();
@@ -356,11 +358,11 @@ impl<C: BrandApiConfig> BrandApiClient<C> {
         let result = if http_method == Method::GET {
             flurl.get().await
         } else if http_method == Method::POST {
-            flurl.post(request_bytes).await
+            flurl.post(body).await
         } else if http_method == Method::PUT {
-            flurl.put(request_bytes).await
+            flurl.put(body).await
         } else if http_method == Method::PATCH {
-            flurl.patch(request_bytes).await
+            flurl.patch(body).await
         } else if http_method == Method::DELETE {
             flurl.delete().await
         } else {
