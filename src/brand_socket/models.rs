@@ -113,6 +113,8 @@ pub struct AccountStatusMessage {
     pub account_id: String,
     pub currency: String,
     pub balance: Option<String>,
+    /// Includes floating profit, unlike `marginAvailable + marginUsed`, which stops at balance.
+    pub equity: Option<String>,
     #[serde(rename = "marginAvailable")]
     pub margin_available: Option<String>,
     #[serde(rename = "marginUsed")]

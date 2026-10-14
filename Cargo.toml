@@ -1,6 +1,6 @@
 [package]
 name = "trade-locker-connector"
-version = "0.6.12"
+version = "0.6.16"
 edition = "2021"
 authors = ["gorin <mxmgorin@gmail.com>"]
 
@@ -15,7 +15,7 @@ http = "*"
 serde = { version = "*", features = ["derive"] }
 serde_json = "*"
 serde_derive = "*"
-tokio = { version = "*", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
 async-trait = "*"
 futures-util = { version = "*", default-features = false }
 error-chain = { version = "0.12.4", default-features = false }
