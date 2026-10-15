@@ -10,7 +10,8 @@ use tokio::sync::RwLock;
 
 #[async_trait::async_trait]
 pub trait BrandSocketApiEventHandler {
-    async fn on_event(&self, event: BrandSocketEvent);
+    /// `payload` is the raw frame the event was parsed from, fields the model drops included.
+    async fn on_event(&self, event: BrandSocketEvent, payload: &str);
     async fn on_connected(&self);
     async fn on_disconnected(&self);
 }
@@ -100,6 +101,8 @@ impl SocketIoEventSubscriberCallback<BrandSocketEventDeserialized, ()> for Brand
         self.last_event_timestamp
             .store(DateTimeAsMicroseconds::now().unix_microseconds, Relaxed);
 
+        let event_payload = event.payload;
+
         match event.result {
             Ok(event) => {
                 match &event {
@@ -115,7 +118,7 @@ impl SocketIoEventSubscriberCallback<BrandSocketEventDeserialized, ()> for Brand
                     BrandSocketEvent::ConnectionError(_) => {}
                 };
 
-                self.handler.on_event(event).await;
+                self.handler.on_event(event, &event_payload).await;
             }
             Err(err) => match err {
                 BrandSocketEventDeserializeErr::NotSupported(err) => self.logger.write_error(
@@ -125,7 +128,7 @@ impl SocketIoEventSubscriberCallback<BrandSocketEventDeserialized, ()> for Brand
                 ),
                 BrandSocketEventDeserializeErr::Serde(err) => self.logger.write_error(
                     "BrandSocketApiInner.on_event".to_string(),
-                    format!("Failed to deserialize: {}. Payload: {}", err, event.payload),
+                    format!("Failed to deserialize: {}. Payload: {}", err, event_payload),
                     None,
                 ),
             },

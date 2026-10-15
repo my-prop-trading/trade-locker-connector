@@ -78,8 +78,8 @@ pub struct ExampleBrandSocketApiEventHandler;
 
 #[async_trait::async_trait]
 impl BrandSocketApiEventHandler for ExampleBrandSocketApiEventHandler {
-    async fn on_event(&self, event: BrandSocketEvent) {
-        println!("on_event: {:?}", event);
+    async fn on_event(&self, event: BrandSocketEvent, payload: &str) {
+        println!("on_event: {:?}, payload: {}", event, payload);
     }
 
     async fn on_connected(&self) {
